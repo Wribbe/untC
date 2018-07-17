@@ -5,8 +5,34 @@ GLfloat * DATA_MESHES[SIZE_DATA_MESHES] = {0};
 size_t SIZE_MESHES[SIZE_DATA_MESHES] = {0};
 GLuint GL_BUFFERS[SIZE_GL_BUFFERS] = {0};
 GLuint GL_VERTEX_ATTRIBS[SIZE_GL_VERTEX_ATTRIBS] = {0};
+struct m4 M4_TRANSFORMATION[SIZE_M4_TRANSFORMATION] = {0};
+struct m4 m4_eye = {{{
+  {1.0f, 0.0f, 0.0f, 0.0f},
+  {0.0f, 1.0f, 0.0f, 0.0f},
+  {0.0f, 0.0f, 1.0f, 0.0f},
+  {0.0f, 0.0f, 0.0f, 1.0f},
+}}};
 
 GLuint program_shader = 0;
+
+const char * source_shader_default_vert = \
+"#version 330 core\n"
+"layout (location = 0) in vec3 pos;\n"
+"uniform mat4 transform;\n"
+"\n"
+"void main()\n"
+"{\n"
+" gl_Position = transform * vec4(pos, 1.0);\n"
+"}\n";
+
+const char * source_shader_default_frag = \
+"#version 330 core\n"
+"out vec4 frag_color;\n"
+"\n"
+"void main()\n"
+"{\n"
+" frag_color = vec4(1.0);\n"
+"}\n";
 
 struct info_window_and_context MAIN_CONTEXT = {
   800,
@@ -29,7 +55,6 @@ window_create(struct info_window_and_context * context) {
       NULL);
   return window;
 }
-
 
 bool
 init_lib(GLFWwindow ** window)
@@ -70,6 +95,7 @@ void init_default_shaders(void);
 void init_opengl_vertex_attributes(void);
 void create_triangle(void);
 void feed_data(GLenum VAO, GLenum VBO, size_t id_mesh, GLenum type);
+void m4_set(size_t index, struct m4 * m4);
 
 GLenum
 vert_attrib(size_t index)
@@ -95,6 +121,16 @@ mesh_data(size_t index)
   return DATA_MESHES[index];
 }
 
+struct obj_render obj_render = {0};
+
+void
+init_data(void)
+{
+  for (size_t i=0; i<SIZE_M4_TRANSFORMATION; i++) {
+    m4_set(i, &m4_eye);
+  }
+}
+
 void *
 main_runner(void * data)
 {
@@ -111,6 +147,9 @@ main_runner(void * data)
   size_t max_frames = runner_data->max_frames;
   GLFWwindow * window = runner_data->window;
 
+  /* Initialize data structures. */
+  init_data();
+
   pthread_mutex_unlock(&runner_data->mutex);
 
   if (!render_get(runner_data, RENDER_DISABLE_RENDERING)) {
@@ -120,6 +159,14 @@ main_runner(void * data)
     create_triangle();
     feed_data(vert_attrib(0), buffer(0), 0, GL_STATIC_DRAW);
     glUseProgram(program_shader);
+
+    GLuint location_transform = glGetUniformLocation(program_shader,
+        "transform");
+    glUniformMatrix4fv(location_transform, 1, GL_TRUE, M4_TRANSFORMATION[0].f[0]);
+
+    obj_render.id_vao = vert_attrib(0);
+    obj_render.id_program = program_shader;
+    obj_render.id_transformation = 0;
   }
 
   while (!glfwWindowShouldClose(window)) {
@@ -193,24 +240,6 @@ init_opengl_buffers(void)
 {
   glGenBuffers(SIZE_GL_BUFFERS, GL_BUFFERS);
 }
-
-const char * source_shader_default_vert = \
-"#version 330 core\n"
-"layout (location = 0) in vec3 pos;\n"
-"\n"
-"void main()\n"
-"{\n"
-" gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);\n"
-"}\n";
-
-const char * source_shader_default_frag = \
-"#version 330 core\n"
-"out vec4 frag_color;\n"
-"\n"
-"void main()\n"
-"{\n"
-" frag_color = vec4(1.0);\n"
-"}\n";
 
 bool
 compile_shader(const char * source, GLuint * shader_id, GLenum type)
@@ -305,4 +334,14 @@ feed_data(GLenum VAO, GLenum VBO, size_t id_mesh, GLenum type)
   glBufferData(GL_ARRAY_BUFFER, mesh_size(id_mesh), mesh_data(id_mesh), type);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_TRUE, 3 * sizeof(GLfloat), (void*)0);
   glEnableVertexAttribArray(0);
+}
+
+void
+m4_set(size_t index, struct m4 * m4)
+{
+  for (size_t i=0; i<4; i++) {
+    for (size_t j=0; j<4; j++) {
+      M4_TRANSFORMATION[index].f[i][j] = m4->f[i][j];
+    }
+  }
 }

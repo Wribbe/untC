@@ -15,6 +15,7 @@ extern size_t SIZE_MESHES[SIZE_DATA_MESHES];
 extern GLuint GL_BUFFERS[SIZE_GL_BUFFERS];
 #define SIZE_GL_VERTEX_ATTRIBS 30
 extern GLuint GL_VERTEX_ATTRIBS[SIZE_GL_VERTEX_ATTRIBS];
+#define SIZE_M4_TRANSFORMATION 3
 
 #define mu_assert(test, message, ...) do { if (!(test)) { \
   snprintf(BUFF_ERROR, SIZE_BUFF_ERROR, message, __VA_ARGS__); \
@@ -85,6 +86,16 @@ struct m4 {
       struct v4 w;
     };
   };
+};
+
+extern struct m4 m4_eye;
+
+extern struct m4 M4_TRANSFORMATION[SIZE_M4_TRANSFORMATION];
+
+struct obj_render {
+  size_t id_vao;
+  size_t id_program;
+  size_t id_transformation;
 };
 
 bool
