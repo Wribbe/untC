@@ -1,0 +1,2 @@
+#!/bin/sh
+valgrind --suppressions=suppress.txt --tool=helgrind ./bin/$1
