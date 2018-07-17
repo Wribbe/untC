@@ -22,11 +22,15 @@ init_lib(GLFWwindow ** window)
     return false;
   }
 
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, MAIN_CONTEXT.GL_MAJOR);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, MAIN_CONTEXT.GL_MINOR);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, MAIN_CONTEXT.GL_PROFILE);
 
-  local_window = glfwCreateWindow(800, 600, "HELLO WORLD!", NULL, NULL);
+  local_window = glfwCreateWindow(MAIN_CONTEXT.height,
+      MAIN_CONTEXT.width,
+      MAIN_CONTEXT.title,
+      NULL,
+      NULL);
 
   if (window == NULL) {
     ERR_WRITE("%s\n", "Could not initialize window");
