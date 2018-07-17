@@ -28,6 +28,7 @@ main(void) {
     return EXIT_SUCCESS;
   } else {
     printf("ERRORS!\n");
+    ERR_PRINT();
     return EXIT_FAILURE;
   }
 }
