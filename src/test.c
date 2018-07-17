@@ -13,7 +13,7 @@ test_run_main_for_5()
 {
   struct main_run_data data = {0};
   size_t max_frames = 5;
-  render_set(&data, RENDER_HIDE_GEOMETRY);
+  render_set(&data, RENDER_DISABLE_RENDERING);
   data.max_frames = max_frames;
   main_run(&data);
   main_wait(&data);

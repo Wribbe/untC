@@ -10,6 +10,7 @@
 extern char BUFF_ERROR[SIZE_BUFF_ERROR];
 #define SIZE_DATA_MESHES 128
 extern GLfloat * DATA_MESHES[SIZE_DATA_MESHES];
+extern size_t SIZE_MESHES[SIZE_DATA_MESHES];
 #define SIZE_GL_BUFFERS 30
 extern GLuint GL_BUFFERS[SIZE_GL_BUFFERS];
 #define SIZE_GL_VERTEX_ATTRIBS 30
@@ -73,7 +74,7 @@ void
 polygon(GLfloat * data, struct v3 * point_list, size_t num_points);
 
 enum RENDER_SETTING_FLAGS {
-  RENDER_HIDE_GEOMETRY,
+  RENDER_DISABLE_RENDERING,
   NUM_FLAGS,
 };
 

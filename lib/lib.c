@@ -1,9 +1,10 @@
 #include "lib.h"
 
-char BUFF_ERROR[SIZE_BUFF_ERROR];
-GLfloat * DATA_MESHES[SIZE_DATA_MESHES];
-GLuint GL_BUFFERS[SIZE_GL_BUFFERS];
-GLuint GL_VERTEX_ATTRIBS[SIZE_GL_VERTEX_ATTRIBS];
+char BUFF_ERROR[SIZE_BUFF_ERROR] = {0};
+GLfloat * DATA_MESHES[SIZE_DATA_MESHES] = {0};
+size_t SIZE_MESHES[SIZE_DATA_MESHES] = {0};
+GLuint GL_BUFFERS[SIZE_GL_BUFFERS] = {0};
+GLuint GL_VERTEX_ATTRIBS[SIZE_GL_VERTEX_ATTRIBS] = {0};
 
 struct info_window_and_context MAIN_CONTEXT = {
   800,
@@ -65,6 +66,9 @@ init_lib(GLFWwindow ** window)
 void
 init_opengl_buffers(void);
 
+void
+init_default_shaders(void);
+
 void *
 main_runner(void * data)
 {
@@ -83,14 +87,15 @@ main_runner(void * data)
 
   pthread_mutex_unlock(&runner_data->mutex);
 
-  if (!render_get(runner_data, RENDER_HIDE_GEOMETRY)) {
+  if (!render_get(runner_data, RENDER_DISABLE_RENDERING)) {
     init_opengl_buffers();
+    init_default_shaders();
   }
 
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
     glfwPollEvents();
-    if (!render_get(data, RENDER_HIDE_GEOMETRY)) {
+    if (!render_get(data, RENDER_DISABLE_RENDERING)) {
       glfwSwapBuffers(window);
     }
     num_frames++;
@@ -151,7 +156,40 @@ render_unset(struct main_run_data * data, size_t flags) {
   data->flags &= flags;
 }
 
+size_t
+mesh_size(size_t index)
+{
+  return SIZE_MESHES[index];
+}
+
+GLfloat *
+mesh_data(size_t index)
+{
+  return DATA_MESHES[index];
+}
+
 void
 init_opengl_buffers(void)
 {
+  glGenBuffers(SIZE_GL_BUFFERS, GL_BUFFERS);
+  glBindBuffer(GL_ARRAY_BUFFER, GL_BUFFERS[0]);
+
+  DATA_MESHES[0] = malloc(sizeof(GLfloat) * 9);
+  if (DATA_MESHES[0] == NULL) {
+    ERR_WRITE("%s\n", "Could not allocate memory for meshes");
+    ERR_PRINT();
+  }
+  struct v3 ps[] = {
+    {{{0.0, 0.5, 0.0}}},
+    {{{-0.5, -0.5, 0.0}}},
+    {{{0.5, -0.5, 0.0}}},
+  };
+  polygon(DATA_MESHES[0], ps, 3);
+  glBufferData(GL_ARRAY_BUFFER, mesh_size(0), mesh_data(0), GL_STATIC_DRAW);
+}
+
+void
+init_default_shaders(void)
+{
+
 }
