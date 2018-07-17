@@ -336,6 +336,8 @@ mesh_data_deallocate(size_t index)
 {
   if (mesh_data(index) != NULL) {
     free(mesh_data(index));
+    mesh_set_data(index, NULL);
+    mesh_set_size(index, 0);
   }
   return true;
 }
