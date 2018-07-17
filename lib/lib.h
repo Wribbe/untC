@@ -8,6 +8,8 @@
 
 #define SIZE_BUFF_ERROR 512
 extern char BUFF_ERROR[SIZE_BUFF_ERROR];
+#define SIZE_DATA_MESHES 128
+extern GLfloat * DATA_MESHES[SIZE_DATA_MESHES];
 
 #define mu_assert(test, message, ...) do { if (!(test)) { \
   snprintf(BUFF_ERROR, SIZE_BUFF_ERROR, message, __VA_ARGS__); \
@@ -42,6 +44,17 @@ struct main_run_data {
   pthread_t thread;
 };
 
+struct v3 {
+  union {
+    GLfloat f[3];
+    struct {
+      GLfloat x;
+      GLfloat y;
+      GLfloat z;
+    };
+  };
+};
+
 bool
 init_lib(GLFWwindow ** window);
 
@@ -50,3 +63,6 @@ main_run(struct main_run_data * data);
 
 void
 main_wait(struct main_run_data * data);
+
+void
+polygon(GLfloat * data, struct v3 * point_list, size_t num_points);

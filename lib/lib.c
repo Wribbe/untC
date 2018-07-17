@@ -1,6 +1,7 @@
 #include "lib.h"
 
 char BUFF_ERROR[SIZE_BUFF_ERROR];
+GLfloat * DATA_MESHES[SIZE_DATA_MESHES];
 
 struct info_window_and_context MAIN_CONTEXT = {
   800,
@@ -112,4 +113,14 @@ void
 main_wait(struct main_run_data * data)
 {
   pthread_join(data->thread, NULL);
+}
+
+void
+polygon(GLfloat * data, struct v3 * point_list, size_t num_points)
+{
+  for (size_t i=0; i<num_points; i++) {
+    for (size_t j= 0; j<3; j++) {
+      data[i*3+j] = point_list[i].f[j];
+    }
+  }
 }
