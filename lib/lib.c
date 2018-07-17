@@ -64,9 +64,12 @@ main_runner(void * data)
 {
   struct main_run_data * runner_data = (struct main_run_data *)(data);
 
-  init_lib(&runner_data->window);
-
   pthread_mutex_lock(&runner_data->mutex);
+
+  if(!init_lib(&runner_data->window)) {
+    ERR_WRITE("%s\n", "Could not initialize libraries");
+    return NULL;
+  }
 
   size_t num_frames = 0;
   size_t max_frames = runner_data->max_frames;
@@ -84,18 +87,23 @@ main_runner(void * data)
     }
   }
   runner_data->total_frames = num_frames;
+  glfwTerminate();
+  glfwDestroyWindow(runner_data->window);
   return NULL;
 }
 
 void
 main_run(struct main_run_data * data)
 {
+  if (!data->pthread_init) {
+    pthread_mutex_init(&data->mutex, NULL);
+    pthread_cond_init(&data->cond, NULL);
+    data->pthread_init = true;
+  }
+  if (data->window == NULL) {
+    data->window = window_create(NULL);
+  }
   pthread_mutex_lock(&data->mutex);
   pthread_create(&data->thread, NULL, main_runner, data);
   pthread_mutex_unlock(&data->mutex);
-}
-
-void
-main_wait(void)
-{
 }

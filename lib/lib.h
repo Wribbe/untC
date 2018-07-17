@@ -22,17 +22,6 @@ extern char BUFF_ERROR[SIZE_BUFF_ERROR];
   printf("OpenGL: %s, GLSL: %s\n", glGetString(GL_VERSION), \
       glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-#define MAIN_RUN_DATA(void) \
-  { \
-    window, \
-    0, \
-    0, \
-    PTHREAD_MUTEX_INITIALIZER, \
-    PTHREAD_COND_INITIALIZER, \
-    0, \
-  }
-
-
 struct info_window_and_context {
   size_t height;
   size_t width;
@@ -47,6 +36,7 @@ struct main_run_data {
   GLFWwindow * window;
   size_t max_frames;
   size_t total_frames;
+  bool pthread_init;
   pthread_mutex_t mutex;
   pthread_cond_t cond;
   pthread_t thread;
@@ -57,10 +47,3 @@ init_lib(GLFWwindow ** window);
 
 void
 main_run(struct main_run_data * data);
-
-void *
-main_runner(void * data);
-
-void
-main_wait(void);
-
