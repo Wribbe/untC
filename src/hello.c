@@ -7,6 +7,6 @@ main(void)
   main_run(&data);
   main_wait(&data);
 
-  printf("Ran for %zu frames!\n", data.total_frames);
+  STATUS("Ran for %zu frames!\n", data.total_frames);
   return EXIT_SUCCESS;
 }

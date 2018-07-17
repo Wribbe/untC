@@ -28,6 +28,8 @@ extern GLuint GL_VERTEX_ATTRIBS[SIZE_GL_VERTEX_ATTRIBS];
 #define OpenGLInfo(void) \
   printf("OpenGL: %s, GLSL: %s\n", glGetString(GL_VERSION), \
       glGetString(GL_SHADING_LANGUAGE_VERSION));
+#define STATUS(fmt, ...) printf("[.]: " fmt, __VA_ARGS__);
+
 
 struct info_window_and_context {
   size_t height;
@@ -83,3 +85,6 @@ render_get(struct main_run_data * data, size_t flags);
 
 void
 render_set(struct main_run_data * data, size_t flags);
+
+extern const char * source_shader_default_vert;
+extern const char * source_shader_default_frag;

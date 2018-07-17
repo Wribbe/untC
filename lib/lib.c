@@ -6,6 +6,8 @@ size_t SIZE_MESHES[SIZE_DATA_MESHES] = {0};
 GLuint GL_BUFFERS[SIZE_GL_BUFFERS] = {0};
 GLuint GL_VERTEX_ATTRIBS[SIZE_GL_VERTEX_ATTRIBS] = {0};
 
+GLuint program_shader = 0;
+
 struct info_window_and_context MAIN_CONTEXT = {
   800,
   600,
@@ -188,8 +190,81 @@ init_opengl_buffers(void)
   glBufferData(GL_ARRAY_BUFFER, mesh_size(0), mesh_data(0), GL_STATIC_DRAW);
 }
 
+const char * source_shader_default_vert = \
+"#version 330 core\n"
+"layout (location = 0) in vec3 pos;\n"
+"\n"
+"void main()\n"
+"{\n"
+" gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);\n"
+"}\n";
+
+const char * source_shader_default_frag = \
+"#version 330 core\n"
+"out vec4 frag_color;\n"
+"\n"
+"void main()\n"
+"{\n"
+" frag_color = vec4(1.0);\n"
+"}\n";
+
+bool
+compile_shader(const char * source, GLuint * shader_id, GLenum type)
+{
+  GLuint id = glCreateShader(type);
+  glShaderSource(id, 1, &source, NULL);
+  glCompileShader(id);
+  int success = 0;
+  glGetShaderiv(id, GL_COMPILE_STATUS, &success);
+  if (!success) {
+    glGetShaderInfoLog(id, SIZE_BUFF_ERROR, NULL, BUFF_ERROR);
+  }
+  *shader_id = id;
+  return success;
+}
+
+bool
+link_shader_program(GLuint id, GLuint sh1, GLuint sh2)
+{
+  glAttachShader(id, sh1);
+  glAttachShader(id, sh2);
+  glLinkProgram(program_shader);
+
+  int succ = 0;
+  glGetProgramiv(id, GL_LINK_STATUS, &succ);
+  if (!succ) {
+    glGetProgramInfoLog(id, SIZE_BUFF_ERROR, NULL, BUFF_ERROR);
+    return succ;
+  }
+  return succ;
+}
+
 void
 init_default_shaders(void)
 {
+  bool succ = false;
+  GLuint vert = 0;
+  GLuint frag = 0;
 
+  succ = compile_shader(source_shader_default_vert, &vert, GL_VERTEX_SHADER);
+  if (!succ) {
+    ERR_PRINT();
+    return;
+  }
+  succ = compile_shader(source_shader_default_frag, &frag, GL_FRAGMENT_SHADER);
+  if (!succ) {
+    ERR_PRINT();
+    return;
+  }
+  STATUS("%s\n", "Shaders compiled successfully.");
+
+  program_shader = glCreateProgram();
+  if (!link_shader_program(program_shader, vert, frag)) {
+    ERR_PRINT();
+  }
+
+  STATUS("%s\n", "Shader program linked successfully.");
+  glDeleteShader(vert);
+  glDeleteShader(frag);
+  STATUS("%s\n", "Deleted compiled shaders.");
 }
