@@ -33,3 +33,6 @@ extern struct info_window_and_context MAIN_CONTEXT;
 
 bool
 init_lib(GLFWwindow ** window);
+
+size_t
+main_run(GLFWwindow * window, size_t max_frames);

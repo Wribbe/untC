@@ -11,9 +11,6 @@ main(void)
     return EXIT_FAILURE;
   }
 
-  while (!glfwWindowShouldClose(window)) {
-    glClear(GL_COLOR_BUFFER_BIT);
-    glfwPollEvents();
-    glfwSwapBuffers(window);
-  }
+  main_run(window, 0);
+  return EXIT_SUCCESS;
 }
