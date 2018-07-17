@@ -63,6 +63,30 @@ struct v3 {
   };
 };
 
+struct v4 {
+  union {
+    GLfloat f[4];
+    struct {
+      GLfloat x;
+      GLfloat y;
+      GLfloat z;
+      GLfloat w;
+    };
+  };
+};
+
+struct m4 {
+  union {
+    GLfloat f[4][4];
+    struct {
+      struct v4 x;
+      struct v4 y;
+      struct v4 z;
+      struct v4 w;
+    };
+  };
+};
+
 bool
 init_lib(GLFWwindow ** window);
 
