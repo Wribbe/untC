@@ -46,10 +46,20 @@ test_polygon()
 }
 
 bool
+test_allocate_mesh_data()
+{
+  size_t num_floats = 300;
+  size_t size = sizeof(GLfloat) * num_floats;
+  GLfloat data[num_floats];
+  return true;
+}
+
+bool
 all_tests() {
   mu_run_test(test_init_lib);
   mu_run_test(test_run_main_for_5);
   mu_run_test(test_polygon);
+  mu_run_test(test_allocate_mesh_data);
   return true;
 }
 

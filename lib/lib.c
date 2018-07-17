@@ -118,7 +118,24 @@ mesh_size(size_t index)
 GLfloat *
 mesh_data(size_t index)
 {
-  return DATA_MESHES[index];
+  return mesh_data(index);
+}
+
+void
+mesh_set_size(size_t index, size_t size)
+{
+  SIZE_MESHES[index] = size;
+}
+
+
+void
+mesh_set_data(size_t index, GLfloat * value)
+{
+  if (value == NULL) {
+    DATA_MESHES[index] = NULL;
+  } else {
+    DATA_MESHES[index] = value;
+  }
 }
 
 struct obj_render obj_render = {0};
@@ -303,6 +320,7 @@ init_default_shaders(void)
   STATUS("%s\n", "Deleted compiled shaders.");
 }
 
+
 void
 init_opengl_vertex_attributes(void)
 {
@@ -310,27 +328,39 @@ init_opengl_vertex_attributes(void)
   glBindVertexArray(vert_attrib(0));
 }
 
-void *
-allocate_mesh_data(size_t index, size_t size)
+
+bool
+mesh_data_deallocate(size_t index)
 {
-  if (DATA_MESHES[index] != NULL) {
-    free(DATA_MESHES[index]);
+  if (mesh_data(index) != NULL) {
+    free(mesh_data(index));
+  }
+  return true;
+}
+
+
+void *
+mesh_data_allocate(size_t index, size_t size)
+{
+  if (mesh_data(index) != NULL) {
+    mesh_data_deallocate(index);
   }
   GLfloat * data = malloc(size);
   if (data == NULL) {
-    DATA_MESHES[index] = NULL;
-    SIZE_MESHES[index] = 0;
+    mesh_set_data(index, NULL);
+    mesh_set_size(index, 0);
     return NULL;
   }
-  DATA_MESHES[index] = data;
-  SIZE_MESHES[index] = size;
+  mesh_set_data(index, data);
+  mesh_set_size(index,size);
   return data;
 }
+
 
 void
 create_triangle(void)
 {
-  GLfloat * data = allocate_mesh_data(0, sizeof(GLfloat)*9);
+  GLfloat * data = mesh_data_allocate(0, sizeof(GLfloat)*9);
   if (data == NULL) {
     ERR_WRITE("%s\n", "Could not allocate memory for meshes");
     ERR_PRINT();
@@ -340,7 +370,7 @@ create_triangle(void)
     {{{-0.5, -0.5, 0.0}}},
     {{{0.5, -0.5, 0.0}}},
   };
-  polygon(DATA_MESHES[0], ps, 3);
+  polygon(mesh_data(0), ps, 3);
 }
 
 void
