@@ -310,11 +310,28 @@ init_opengl_vertex_attributes(void)
   glBindVertexArray(vert_attrib(0));
 }
 
+void *
+allocate_mesh_data(size_t index, size_t size)
+{
+  if (DATA_MESHES[index] != NULL) {
+    free(DATA_MESHES[index]);
+  }
+  GLfloat * data = malloc(size);
+  if (data == NULL) {
+    DATA_MESHES[index] = NULL;
+    SIZE_MESHES[index] = 0;
+    return NULL;
+  }
+  DATA_MESHES[index] = data;
+  SIZE_MESHES[index] = size;
+  return data;
+}
+
 void
 create_triangle(void)
 {
-  DATA_MESHES[0] = malloc(sizeof(GLfloat) * 9);
-  if (DATA_MESHES[0] == NULL) {
+  GLfloat * data = allocate_mesh_data(0, sizeof(GLfloat)*9);
+  if (data == NULL) {
     ERR_WRITE("%s\n", "Could not allocate memory for meshes");
     ERR_PRINT();
   }
@@ -324,7 +341,6 @@ create_triangle(void)
     {{{0.5, -0.5, 0.0}}},
   };
   polygon(DATA_MESHES[0], ps, 3);
-  SIZE_MESHES[0] = sizeof(GLfloat)*9;
 }
 
 void
