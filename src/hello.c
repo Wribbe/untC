@@ -11,8 +11,10 @@ main(void)
     return EXIT_FAILURE;
   }
 
-  size_t total_frames = 0;
-  main_run(window, 0, &total_frames);
-  printf("Ran for %zu frames!\n", total_frames);
+  struct main_run_data data = MAIN_RUN_DATA();
+  main_run(&data);
+  pthread_join(data.thread, NULL);
+
+  printf("Ran for %zu frames!\n", data.total_frames);
   return EXIT_SUCCESS;
 }

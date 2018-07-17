@@ -8,7 +8,7 @@ struct info_window_and_context MAIN_CONTEXT = {
   "HELLO WORLD",
   3,
   3,
-  GLFW_OPENGL_CORE_PROFILE
+  GLFW_OPENGL_CORE_PROFILE,
 };
 
 GLFWwindow *
@@ -59,9 +59,15 @@ init_lib(GLFWwindow ** window)
   return true;
 }
 
-void
-main_run(GLFWwindow * window, size_t max_frames, size_t * total_frames) {
+void *
+main_runner(void * data)
+{
+  struct main_run_data * runner_data = (struct main_run_data *)(data);
+
   size_t num_frames = 0;
+  size_t max_frames = runner_data->max_frames;
+  GLFWwindow * window = runner_data->window;
+
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
     glfwPollEvents();
@@ -71,7 +77,17 @@ main_run(GLFWwindow * window, size_t max_frames, size_t * total_frames) {
       break;
     }
   }
-  if (total_frames != NULL) {
-    *total_frames = num_frames;
-  }
+  runner_data->total_frames = num_frames;
+  return NULL;
+}
+
+void
+main_run(struct main_run_data * data)
+{
+  pthread_create(&data->thread, NULL, main_runner, data);
+}
+
+void
+main_wait(void)
+{
 }
