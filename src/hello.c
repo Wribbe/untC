@@ -1,8 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-
-#include <GL/gl3w.h>
-#include <GLFW/glfw3.h>
+#include "lib.h"
 
 int
 main(void)
