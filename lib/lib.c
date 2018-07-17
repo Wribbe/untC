@@ -127,8 +127,9 @@ mesh_set_size(size_t index, size_t size)
   SIZE_MESHES[index] = size;
 }
 
+bool mesh_data_deallocate(size_t index);
 
-void
+GLfloat *
 mesh_set_data(size_t index, GLfloat * value)
 {
   if (value == NULL) {
@@ -136,6 +137,7 @@ mesh_set_data(size_t index, GLfloat * value)
   } else {
     DATA_MESHES[index] = value;
   }
+  return DATA_MESHES[index];
 }
 
 struct obj_render obj_render = {0};
