@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <pthread.h>
 
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
@@ -34,5 +35,5 @@ extern struct info_window_and_context MAIN_CONTEXT;
 bool
 init_lib(GLFWwindow ** window);
 
-size_t
-main_run(GLFWwindow * window, size_t max_frames);
+void
+main_run(GLFWwindow * window, size_t max_frames, size_t * total_frames);

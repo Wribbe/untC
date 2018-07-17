@@ -11,6 +11,8 @@ main(void)
     return EXIT_FAILURE;
   }
 
-  main_run(window, 0);
+  size_t total_frames = 0;
+  main_run(window, 0, &total_frames);
+  printf("Ran for %zu frames!\n", total_frames);
   return EXIT_SUCCESS;
 }

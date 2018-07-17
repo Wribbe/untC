@@ -59,9 +59,8 @@ init_lib(GLFWwindow ** window)
   return true;
 }
 
-
-size_t
-main_run(GLFWwindow * window, size_t max_frames) {
+void
+main_run(GLFWwindow * window, size_t max_frames, size_t * total_frames) {
   size_t num_frames = 0;
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -72,5 +71,7 @@ main_run(GLFWwindow * window, size_t max_frames) {
       break;
     }
   }
-  return num_frames;
+  if (total_frames != NULL) {
+    *total_frames = num_frames;
+  }
 }
