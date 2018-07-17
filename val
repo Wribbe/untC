@@ -1,0 +1,2 @@
+#!/bin/sh
+valgrind --suppressions=suppress.txt --leak-check=full ./bin/$1
