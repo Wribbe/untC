@@ -12,3 +12,11 @@
    obj:/usr/lib/dri/radeonsi_dri.so
    ...
 }
+
+{
+   radeosi_dri_race
+   Helgrind:Race
+   ...
+   obj:/usr/lib/dri/radeonsi_dri.so
+   ...
+}
