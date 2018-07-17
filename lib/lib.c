@@ -162,6 +162,7 @@ main_runner(void * data)
 
     GLuint location_transform = glGetUniformLocation(program_shader,
         "transform");
+    M4_TRANSFORMATION[0].x.w += 0.5f;
     glUniformMatrix4fv(location_transform, 1, GL_TRUE, M4_TRANSFORMATION[0].f[0]);
 
     obj_render.id_vao = vert_attrib(0);
