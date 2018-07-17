@@ -123,3 +123,9 @@ render_set(struct main_run_data * data, size_t flags);
 
 extern const char * source_shader_default_vert;
 extern const char * source_shader_default_frag;
+
+GLfloat *
+mesh_set_data(size_t index, GLfloat * value);
+
+void
+mesh_set_size(size_t index, size_t size);
