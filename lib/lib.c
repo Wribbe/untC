@@ -64,9 +64,13 @@ main_runner(void * data)
 {
   struct main_run_data * runner_data = (struct main_run_data *)(data);
 
+  pthread_mutex_lock(&runner_data->mutex);
+
   size_t num_frames = 0;
   size_t max_frames = runner_data->max_frames;
   GLFWwindow * window = runner_data->window;
+
+  pthread_mutex_unlock(&runner_data->mutex);
 
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -84,7 +88,9 @@ main_runner(void * data)
 void
 main_run(struct main_run_data * data)
 {
+  pthread_mutex_lock(&data->mutex);
   pthread_create(&data->thread, NULL, main_runner, data);
+  pthread_mutex_unlock(&data->mutex);
 }
 
 void

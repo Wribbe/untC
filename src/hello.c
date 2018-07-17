@@ -12,8 +12,9 @@ main(void)
   }
 
   struct main_run_data data = MAIN_RUN_DATA();
-  main_run(&data);
-  pthread_join(data.thread, NULL);
+  //main_run(&data);
+  //pthread_join(data.thread, NULL);
+  main_runner(&data);
 
   printf("Ran for %zu frames!\n", data.total_frames);
   return EXIT_SUCCESS;

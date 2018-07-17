@@ -58,6 +58,9 @@ init_lib(GLFWwindow ** window);
 void
 main_run(struct main_run_data * data);
 
+void *
+main_runner(void * data);
+
 void
 main_wait(void);
 
