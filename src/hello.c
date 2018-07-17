@@ -5,7 +5,7 @@ main(void)
 {
   struct main_run_data data = {0};
   main_run(&data);
-  pthread_join(data.thread, NULL);
+  main_wait(&data);
 
   printf("Ran for %zu frames!\n", data.total_frames);
   return EXIT_SUCCESS;

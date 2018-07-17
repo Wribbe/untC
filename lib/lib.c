@@ -107,3 +107,9 @@ main_run(struct main_run_data * data)
   pthread_create(&data->thread, NULL, main_runner, data);
   pthread_mutex_unlock(&data->mutex);
 }
+
+void
+main_wait(struct main_run_data * data)
+{
+  pthread_join(data->thread, NULL);
+}
