@@ -11,12 +11,23 @@ struct info_window_and_context MAIN_CONTEXT = {
   GLFW_OPENGL_CORE_PROFILE
 };
 
+GLFWwindow *
+window_create(struct info_window_and_context * context) {
+  if (context == NULL) {
+    context = &MAIN_CONTEXT;
+  }
+  GLFWwindow * window = glfwCreateWindow(context->height,
+      context->width,
+      context->title,
+      NULL,
+      NULL);
+  return window;
+}
+
 
 bool
 init_lib(GLFWwindow ** window)
 {
-  GLFWwindow * local_window = NULL;
-
   if (!glfwInit()) {
     ERR_WRITE("%s\n", "Could not initialize GLFW");
     return false;
@@ -26,13 +37,9 @@ init_lib(GLFWwindow ** window)
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, MAIN_CONTEXT.GL_MINOR);
   glfwWindowHint(GLFW_OPENGL_PROFILE, MAIN_CONTEXT.GL_PROFILE);
 
-  local_window = glfwCreateWindow(MAIN_CONTEXT.height,
-      MAIN_CONTEXT.width,
-      MAIN_CONTEXT.title,
-      NULL,
-      NULL);
+  GLFWwindow * local_window = window_create(NULL);
 
-  if (window == NULL) {
+  if (local_window == NULL) {
     ERR_WRITE("%s\n", "Could not initialize window");
     glfwTerminate();
     return false;
