@@ -1,39 +1,33 @@
 #include "lib.h"
 
-#define mu_assert(message, test) do { if (!(test)) return message; } while (0)
-#define mu_run_test(test) do { char * message = test(); tests_run++; \
-  if (message) { return message; }} while (0)
-
 int tests_run = 0;
 
 int foo = 7;
 int bar = 4;
 
-static char * test_foo() {
-    mu_assert("error, foo != 7", foo == 7);
-    return 0;
+char BUFF_ERROR[SIZE_BUFF_ERROR];
+
+bool
+test_foo_bar()
+{
+  mu_assert(foo==bar, "foo %d, was not equal to bar %d!\n", foo, bar);
+  return true;
 }
 
-static char * test_bar() {
-    mu_assert("error, bar != 5", bar == 5);
-    return 0;
+bool
+all_tests() {
+  mu_run_test(test_foo_bar);
+  return true;
 }
 
-static char * all_tests() {
-    mu_run_test(test_foo);
-    mu_run_test(test_bar);
-    return 0;
-}
-
-int main(int argc, char **argv) {
-    char *result = all_tests();
-    if (result != 0) {
-        printf("%s\n", result);
-    }
-    else {
-        printf("ALL TESTS PASSED\n");
-    }
-    printf("Tests run: %d\n", tests_run);
-
-    return result != 0;
+int
+main(void) {
+  bool success = all_tests();
+  if (success) {
+    printf("NO ERRORS!\n");
+    return EXIT_SUCCESS;
+  } else {
+    printf("ERRORS!\n");
+    return EXIT_FAILURE;
+  }
 }
