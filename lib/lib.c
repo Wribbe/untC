@@ -65,11 +65,35 @@ init_lib(GLFWwindow ** window)
   return true;
 }
 
-void
-init_opengl_buffers(void);
+void init_opengl_buffers(void);
+void init_default_shaders(void);
+void init_opengl_vertex_attributes(void);
+void create_triangle(void);
+void feed_data(GLenum VAO, GLenum VBO, size_t id_mesh, GLenum type);
 
-void
-init_default_shaders(void);
+GLenum
+vert_attrib(size_t index)
+{
+  return GL_VERTEX_ATTRIBS[index];
+}
+
+GLenum
+buffer(size_t index)
+{
+  return GL_BUFFERS[index];
+}
+
+size_t
+mesh_size(size_t index)
+{
+  return SIZE_MESHES[index];
+}
+
+GLfloat *
+mesh_data(size_t index)
+{
+  return DATA_MESHES[index];
+}
 
 void *
 main_runner(void * data)
@@ -92,12 +116,18 @@ main_runner(void * data)
   if (!render_get(runner_data, RENDER_DISABLE_RENDERING)) {
     init_opengl_buffers();
     init_default_shaders();
+    init_opengl_vertex_attributes();
+    create_triangle();
+    feed_data(vert_attrib(0), buffer(0), 0, GL_STATIC_DRAW);
+    glUseProgram(program_shader);
   }
 
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
     glfwPollEvents();
     if (!render_get(data, RENDER_DISABLE_RENDERING)) {
+      glBindVertexArray(vert_attrib(0));
+      glDrawArrays(GL_TRIANGLES, 0, 3);
       glfwSwapBuffers(window);
     }
     num_frames++;
@@ -158,36 +188,10 @@ render_unset(struct main_run_data * data, size_t flags) {
   data->flags &= flags;
 }
 
-size_t
-mesh_size(size_t index)
-{
-  return SIZE_MESHES[index];
-}
-
-GLfloat *
-mesh_data(size_t index)
-{
-  return DATA_MESHES[index];
-}
-
 void
 init_opengl_buffers(void)
 {
   glGenBuffers(SIZE_GL_BUFFERS, GL_BUFFERS);
-  glBindBuffer(GL_ARRAY_BUFFER, GL_BUFFERS[0]);
-
-  DATA_MESHES[0] = malloc(sizeof(GLfloat) * 9);
-  if (DATA_MESHES[0] == NULL) {
-    ERR_WRITE("%s\n", "Could not allocate memory for meshes");
-    ERR_PRINT();
-  }
-  struct v3 ps[] = {
-    {{{0.0, 0.5, 0.0}}},
-    {{{-0.5, -0.5, 0.0}}},
-    {{{0.5, -0.5, 0.0}}},
-  };
-  polygon(DATA_MESHES[0], ps, 3);
-  glBufferData(GL_ARRAY_BUFFER, mesh_size(0), mesh_data(0), GL_STATIC_DRAW);
 }
 
 const char * source_shader_default_vert = \
@@ -267,4 +271,38 @@ init_default_shaders(void)
   glDeleteShader(vert);
   glDeleteShader(frag);
   STATUS("%s\n", "Deleted compiled shaders.");
+}
+
+void
+init_opengl_vertex_attributes(void)
+{
+  glGenVertexArrays(SIZE_GL_VERTEX_ATTRIBS, GL_VERTEX_ATTRIBS);
+  glBindVertexArray(vert_attrib(0));
+}
+
+void
+create_triangle(void)
+{
+  DATA_MESHES[0] = malloc(sizeof(GLfloat) * 9);
+  if (DATA_MESHES[0] == NULL) {
+    ERR_WRITE("%s\n", "Could not allocate memory for meshes");
+    ERR_PRINT();
+  }
+  struct v3 ps[] = {
+    {{{0.0, 0.5, 0.0}}},
+    {{{-0.5, -0.5, 0.0}}},
+    {{{0.5, -0.5, 0.0}}},
+  };
+  polygon(DATA_MESHES[0], ps, 3);
+  SIZE_MESHES[0] = sizeof(GLfloat)*9;
+}
+
+void
+feed_data(GLenum VAO, GLenum VBO, size_t id_mesh, GLenum type)
+{
+  glBindVertexArray(VAO);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glBufferData(GL_ARRAY_BUFFER, mesh_size(id_mesh), mesh_data(id_mesh), type);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_TRUE, 3 * sizeof(GLfloat), (void*)0);
+  glEnableVertexAttribArray(0);
 }
