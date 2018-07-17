@@ -2,6 +2,8 @@
 
 char BUFF_ERROR[SIZE_BUFF_ERROR];
 GLfloat * DATA_MESHES[SIZE_DATA_MESHES];
+GLuint GL_BUFFERS[SIZE_GL_BUFFERS];
+GLuint GL_VERTEX_ATTRIBS[SIZE_GL_VERTEX_ATTRIBS];
 
 struct info_window_and_context MAIN_CONTEXT = {
   800,
@@ -60,6 +62,9 @@ init_lib(GLFWwindow ** window)
   return true;
 }
 
+void
+init_opengl_buffers(void);
+
 void *
 main_runner(void * data)
 {
@@ -77,6 +82,10 @@ main_runner(void * data)
   GLFWwindow * window = runner_data->window;
 
   pthread_mutex_unlock(&runner_data->mutex);
+
+  if (!render_get(runner_data, RENDER_HIDE_GEOMETRY)) {
+    init_opengl_buffers();
+  }
 
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -140,4 +149,9 @@ render_set(struct main_run_data * data, size_t flags) {
 void
 render_unset(struct main_run_data * data, size_t flags) {
   data->flags &= flags;
+}
+
+void
+init_opengl_buffers(void)
+{
 }

@@ -10,6 +10,10 @@
 extern char BUFF_ERROR[SIZE_BUFF_ERROR];
 #define SIZE_DATA_MESHES 128
 extern GLfloat * DATA_MESHES[SIZE_DATA_MESHES];
+#define SIZE_GL_BUFFERS 30
+extern GLuint GL_BUFFERS[SIZE_GL_BUFFERS];
+#define SIZE_GL_VERTEX_ATTRIBS 30
+extern GLuint GL_VERTEX_ATTRIBS[SIZE_GL_VERTEX_ATTRIBS];
 
 #define mu_assert(test, message, ...) do { if (!(test)) { \
   snprintf(BUFF_ERROR, SIZE_BUFF_ERROR, message, __VA_ARGS__); \
