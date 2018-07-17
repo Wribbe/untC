@@ -327,7 +327,7 @@ void
 init_opengl_vertex_attributes(void)
 {
   glGenVertexArrays(SIZE_GL_VERTEX_ATTRIBS, GL_VERTEX_ATTRIBS);
-  glBindVertexArray(VAO(0);
+  glBindVertexArray(VAO(0));
 }
 
 
