@@ -5,7 +5,11 @@ int tests_run = 0;
 int foo = 7;
 int bar = 4;
 
-char BUFF_ERROR[SIZE_BUFF_ERROR];
+bool
+test_init_lib()
+{
+  return init_lib(NULL);
+}
 
 bool
 test_foo_bar()

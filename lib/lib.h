@@ -15,3 +15,21 @@ extern char BUFF_ERROR[SIZE_BUFF_ERROR];
   if (!success) { return success; }} while (0)
 
 #define ERR_PRINT(void) printf("%s\n", BUFF_ERROR);
+#define ERR_WRITE(fmt, ...) \
+  snprintf(BUFF_ERROR, SIZE_BUFF_ERROR, fmt, __VA_ARGS__);
+#define OpenGLInfo(void) \
+  printf("OpenGL: %s, GLSL: %s\n", glGetString(GL_VERSION), \
+      glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+struct info_window_and_context {
+  size_t height;
+  size_t width;
+  const char * title;
+  int GL_MINOR;
+  int GL_MAJOR;
+  int GL_PROFILE;
+};
+extern struct info_window_and_context MAIN_CONTEXT;
+
+bool
+init_lib(GLFWwindow ** window);
