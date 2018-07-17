@@ -98,13 +98,13 @@ void feed_data(GLenum VAO, GLenum VBO, size_t id_mesh, GLenum type);
 void m4_set(size_t index, struct m4 * m4);
 
 GLenum
-vert_attrib(size_t index)
+VAO(size_t index)
 {
   return GL_VERTEX_ATTRIBS[index];
 }
 
 GLenum
-buffer(size_t index)
+VBO(size_t index)
 {
   return GL_BUFFERS[index];
 }
@@ -174,7 +174,7 @@ main_runner(void * data)
     init_default_shaders();
     init_opengl_vertex_attributes();
     create_triangle();
-    feed_data(vert_attrib(0), buffer(0), 0, GL_STATIC_DRAW);
+    feed_data(VAO(0), VBO(0), 0, GL_STATIC_DRAW);
     glUseProgram(program_shader);
 
     GLuint location_transform = glGetUniformLocation(program_shader,
@@ -182,7 +182,7 @@ main_runner(void * data)
     M4_TRANSFORMATION[0].x.w += 0.5f;
     glUniformMatrix4fv(location_transform, 1, GL_TRUE, M4_TRANSFORMATION[0].f[0]);
 
-    obj_render.id_vao = vert_attrib(0);
+    obj_render.id_vao = VAO(0);
     obj_render.id_program = program_shader;
     obj_render.id_transformation = 0;
   }
@@ -191,7 +191,7 @@ main_runner(void * data)
     glClear(GL_COLOR_BUFFER_BIT);
     glfwPollEvents();
     if (!render_get(data, RENDER_DISABLE_RENDERING)) {
-      glBindVertexArray(vert_attrib(0));
+      glBindVertexArray(VAO(0));
       glDrawArrays(GL_TRIANGLES, 0, 3);
       glfwSwapBuffers(window);
     }
@@ -325,7 +325,7 @@ void
 init_opengl_vertex_attributes(void)
 {
   glGenVertexArrays(SIZE_GL_VERTEX_ATTRIBS, GL_VERTEX_ATTRIBS);
-  glBindVertexArray(vert_attrib(0));
+  glBindVertexArray(VAO(0);
 }
 
 
