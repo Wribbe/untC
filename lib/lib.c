@@ -118,7 +118,7 @@ mesh_size(size_t index)
 GLfloat *
 mesh_data(size_t index)
 {
-  return mesh_data(index);
+  return DATA_MESHES[index];
 }
 
 void
