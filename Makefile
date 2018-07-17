@@ -14,7 +14,7 @@ DIR_LIB := lib
 DIR_SRC := src
 
 EXECUTABLES := $(patsubst $(DIR_SRC)/%.c,$(DIR_BIN)/%,$(wildcard $(DIR_SRC)/*.c))
-LIBSOURCES := $(wildcard $(DIR_LIB)/*.c)
+LIBFILES := $(wildcard $(DIR_LIB)/*)
 
 all: dirs $(EXECUTABLES)
 
@@ -30,5 +30,5 @@ dirs:
 # Check if bin exists.
 	@[ -d $(DIR_BIN) ] || mkdir $(DIR_BIN)
 
-$(DIR_BIN)/% : $(DIR_SRC)/%.c gl3w.c $(LIBSOURCES)
+$(DIR_BIN)/% : $(DIR_SRC)/%.c gl3w.c $(LIBFILES)
 	$(CC) $(filter %.c,$^) -o $@ $(CFLAGS) $(INCLUDES) $(INCLUDES_CLONED) $(GENERAL_LIBRARIES) $(GRAPHICS_FLAGS)
