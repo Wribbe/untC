@@ -64,6 +64,8 @@ main_runner(void * data)
 {
   struct main_run_data * runner_data = (struct main_run_data *)(data);
 
+  init_lib(&runner_data->window);
+
   pthread_mutex_lock(&runner_data->mutex);
 
   size_t num_frames = 0;
