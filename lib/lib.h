@@ -42,6 +42,7 @@ struct main_run_data {
   pthread_mutex_t mutex;
   pthread_cond_t cond;
   pthread_t thread;
+  size_t flags;
 };
 
 struct v3 {
@@ -66,3 +67,14 @@ main_wait(struct main_run_data * data);
 
 void
 polygon(GLfloat * data, struct v3 * point_list, size_t num_points);
+
+enum RENDER_SETTING_FLAGS {
+  RENDER_HIDE_GEOMETRY,
+  NUM_FLAGS,
+};
+
+bool
+render_get(struct main_run_data * data, size_t flags);
+
+void
+render_set(struct main_run_data * data, size_t flags);

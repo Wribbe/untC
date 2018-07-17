@@ -81,7 +81,9 @@ main_runner(void * data)
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
     glfwPollEvents();
-    glfwSwapBuffers(window);
+    if (!render_get(data, RENDER_HIDE_GEOMETRY)) {
+      glfwSwapBuffers(window);
+    }
     num_frames++;
     if (max_frames > 0 && num_frames >= max_frames) {
       break;
@@ -123,4 +125,19 @@ polygon(GLfloat * data, struct v3 * point_list, size_t num_points)
       data[i*3+j] = point_list[i].f[j];
     }
   }
+}
+
+bool
+render_get(struct main_run_data * data, size_t flags) {
+  return data->flags & flags;
+}
+
+void
+render_set(struct main_run_data * data, size_t flags) {
+  data->flags |= flags;
+}
+
+void
+render_unset(struct main_run_data * data, size_t flags) {
+  data->flags &= flags;
 }
