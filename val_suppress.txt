@@ -1,0 +1,14 @@
+{
+   radeonsi_dri
+   Memcheck:Cond
+   obj:/usr/lib/dri/radeonsi_dri.so
+   ...
+}
+
+{
+   radeosi_dri_memleak
+   Memcheck:Leak
+   ...
+   obj:/usr/lib/dri/radeonsi_dri.so
+   ...
+}
