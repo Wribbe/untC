@@ -82,7 +82,7 @@ test_obj_translate()
   obj_translate(id_transformation, &v3_delta);
   struct v3 pos_moved = obj_pos(id_transformation);
   mu_assert(v3_eq(&v3_delta, &pos_moved), "v3 %s was not equal to v3 %s.",
-      v3_str(&delta), v3_str(&pos_moved));
+      v3_str(&v3_delta), v3_str(&pos_moved));
   return true;
 }
 
@@ -92,6 +92,7 @@ all_tests() {
   mu_run_test(test_run_main_for_5);
   mu_run_test(test_polygon);
   mu_run_test(test_allocate_mesh_data);
+  mu_run_test(test_obj_translate);
   return true;
 }
 
