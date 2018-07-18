@@ -87,11 +87,24 @@ test_obj_translate()
 }
 
 bool
+test_v3_str_500()
+{
+  size_t num_prints = 500;
+  struct v3 v = {{{1,2,3}}};
+  for (size_t i=0; i<num_prints; i++) {
+    const char * res = v3_str(&v);
+    //printf("%s\n", res);
+  }
+  return true;
+}
+
+bool
 all_tests() {
   mu_run_test(test_init_lib);
   mu_run_test(test_run_main_for_5);
   mu_run_test(test_polygon);
   mu_run_test(test_allocate_mesh_data);
+  mu_run_test(test_v3_str_500);
   mu_run_test(test_obj_translate);
   return true;
 }
