@@ -74,6 +74,19 @@ test_allocate_mesh_data()
 }
 
 bool
+test_obj_translate()
+{
+  GLfloat delta = 0.5f;
+  size_t id_transformation = 0;
+  struct v3 v3_delta = {{{delta, delta, delta}}};
+  obj_translate(id_transformation, &v3_delta);
+  struct v3 pos_moved = obj_pos(id_transformation);
+  mu_assert(v3_eq(&v3_delta, &pos_moved), "v3 %s was not equal to v3 %s.",
+      v3_str(&delta), v3_str(&pos_moved));
+  return true;
+}
+
+bool
 all_tests() {
   mu_run_test(test_init_lib);
   mu_run_test(test_run_main_for_5);
