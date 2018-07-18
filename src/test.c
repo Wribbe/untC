@@ -113,7 +113,7 @@ test_polygon_from_clicks()
 
   click_save(correct[0], correct[1]);
   click_save(correct[1*3+0], correct[1*3+1]);
-  click_save(correct[2*3+0]+10, correct[2*3+1]);
+  click_save(correct[2*3+0], correct[2*3+1]);
 
   size_t num_points = 3;
   size_t num_elements = num_points*3;
