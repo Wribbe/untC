@@ -162,3 +162,6 @@ v3_eq(struct v3 * v1, struct v3 * v2);
 
 void
 obj_transfomation_reset(size_t id_transformation);
+
+struct m4 *
+transformation_get(size_t id_transformation);

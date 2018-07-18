@@ -408,15 +408,26 @@ m4_set(size_t index, struct m4 * m4)
   }
 }
 
+struct m4 * transformation_get(size_t id_transformation);
+
 void
 obj_translate(size_t id_transformation, struct v3 * delta)
 {
+  struct m4 * t = transformation_get(id_transformation);
+  t->x.w = delta->x;
+  t->y.w = delta->y;
+  t->z.w = delta->z;
 }
 
 struct v3
 obj_pos(size_t id_transformation)
 {
-  return (struct v3){{{0,0,0}}};
+  struct m4 * t = transformation_get(id_transformation);
+  return (struct v3){{{
+    t->x.w,
+    t->y.w,
+    t->z.w,
+  }}};
 }
 
 const char *
@@ -449,4 +460,10 @@ void
 obj_transfomation_reset(size_t id_transformation)
 {
   m4_set(id_transformation, &m4_eye);
+}
+
+struct m4 *
+transformation_get(size_t id_transformation)
+{
+  return &M4_TRANSFORMATION[id_transformation];
 }

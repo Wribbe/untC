@@ -84,6 +84,10 @@ test_obj_translate()
   mu_assert(v3_eq(&v3_delta, &pos_moved), "v3 %s was not equal to v3 %s.",
       v3_str(&v3_delta), v3_str(&pos_moved));
   obj_transfomation_reset(id_transformation);
+  struct v3 pos_zero = {{{0,0,0}}};
+  struct v3 pos_current = obj_pos(id_transformation);
+  mu_assert(v3_eq(&pos_current, &pos_zero), "v3 %s was not reset.",
+      v3_str(&pos_current));
   return true;
 }
 
@@ -93,8 +97,7 @@ test_v3_str_500()
   size_t num_prints = 500;
   struct v3 v = {{{1,2,3}}};
   for (size_t i=0; i<num_prints; i++) {
-    const char * res = v3_str(&v);
-    //printf("%s\n", res);
+    v3_str(&v);
   }
   return true;
 }
