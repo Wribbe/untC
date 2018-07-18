@@ -468,3 +468,9 @@ transformation_get(size_t id_transformation)
 {
   return &M4_TRANSFORMATION[id_transformation];
 }
+
+struct v3
+save_click(GLfloat x, GLfloat y)
+{
+  return (struct v3){{{x, y, 0.0f}}};
+}

@@ -105,7 +105,25 @@ test_v3_str_500()
 bool
 test_polygon_from_clicks()
 {
-  mu_assert(false, "%s\n", "FAILING!");
+  GLfloat correct[] = {
+     0.0f, 0.5f, 0.0f,
+    -0.5f,-0.5f, 0.0f,
+     0.5f,-0.5f, 0.0f,
+  };
+  struct v3 clicks[] = {
+    save_click(correct[0], correct[1]),
+    save_click(correct[1*3+0], correct[1*3+1]),
+    save_click(correct[2*3+0], correct[2*3+1]),
+  };
+  size_t num_points = 3;
+  size_t num_elements = num_points*3;
+  GLfloat data[num_elements];
+  polygon(data, clicks, num_points);
+  for (size_t i=0; i<num_elements; i++) {
+    mu_assert(data[i] == correct[i],
+        "data[%zu] not equal correct[%zu]; %f != %f.\n",
+        i, i, data[i], correct[i]);
+  }
   return true;
 }
 
