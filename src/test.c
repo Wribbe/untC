@@ -147,7 +147,7 @@ test_click_rewind_overrun()
       "Rewound click should be at last position (%p), but was on (%p).",
       (void*) click_buffer_last, (void*)current);
   struct v3 * correct = click_buffer_start + 3;
-  current = correct+3;
+  current = correct;
   current = click_rewind(current, 3*SIZE_CLICK_BUFFER);
   mu_assert(current == correct,
       "Rewound click did not loop around correctly, is %p, should be %p.",
