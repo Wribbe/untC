@@ -16,12 +16,12 @@ struct m4 m4_eye = {{{
 char STRING_RING_BUFFER[SIZE_STRING_RING_BUFFER] = {0};
 char * str_ring_start = STRING_RING_BUFFER;
 char * str_ring_current = STRING_RING_BUFFER;
-char * str_ring_end = STRING_RING_BUFFER + SIZE_STRING_RING_BUFFER;
+char * str_ring_end = STRING_RING_BUFFER + (SIZE_STRING_RING_BUFFER-1);
 
 struct v3 CLICK_BUFFER[SIZE_CLICK_BUFFER] = {0};
 struct v3 * click_buffer_start = CLICK_BUFFER;
 struct v3 * click_buffer_current = CLICK_BUFFER;
-struct v3 * click_buffer_last = CLICK_BUFFER+SIZE_CLICK_BUFFER;
+struct v3 * click_buffer_last = CLICK_BUFFER+(SIZE_CLICK_BUFFER-1);
 
 GLuint program_shader = 0;
 
