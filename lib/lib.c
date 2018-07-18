@@ -475,18 +475,41 @@ transformation_get(size_t id_transformation)
 }
 
 struct v3 *
+click_next(struct v3 * click_pointer)
+{
+  if (click_pointer+1 > click_buffer_last) {
+    return click_buffer_start;
+  }
+  return click_pointer+1;
+}
+
+struct v3 *
+click_rewind(size_t num_points)
+{
+  if (click_buffer_current - num_points < click_buffer_start) {
+    num_points %= click_buffer_current-click_buffer_start;
+    click_buffer_current = click_buffer_last;
+  }
+  return click_buffer_current - num_points;
+}
+
+struct v3 *
 click_save(GLfloat x, GLfloat y)
 {
-  if (click_buffer_current+1 > click_buffer_last) {
-    click_buffer_current = click_buffer_start;
-  }
-  *click_buffer_current = (struct v3){{{x, y, 0.0f}}};
+  click_buffer_current->x = x;
+  click_buffer_current->y = y;
+
   struct v3 * v3_ptr = click_buffer_current;
-  click_buffer_current++;
+  click_buffer_current = click_next(click_buffer_current);
   return v3_ptr;
 }
 
 void
 polygon_from_clicks(GLfloat * data, size_t num_points)
 {
+  struct v3 * current = click_rewind(num_points);
+  for (size_t i=0; i<num_points; i++) {
+    memcpy(data+(i*3), current->f, sizeof(struct v3));
+    current = click_next(current);
+  }
 }

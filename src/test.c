@@ -113,11 +113,12 @@ test_polygon_from_clicks()
 
   click_save(correct[0], correct[1]);
   click_save(correct[1*3+0], correct[1*3+1]);
-  click_save(correct[2*3+0], correct[2*3+1]);
+  click_save(correct[2*3+0]+10, correct[2*3+1]);
 
   size_t num_points = 3;
   size_t num_elements = num_points*3;
   GLfloat data[num_elements];
+  memset(data, 0, sizeof(GLfloat)*num_elements);
   polygon_from_clicks(data, num_points);
   for (size_t i=0; i<num_elements; i++) {
     mu_assert(data[i] == correct[i],
@@ -145,17 +146,19 @@ all_tests() {
   mu_run_test(test_v3_str_500);
   mu_run_test(test_obj_translate);
   mu_run_test(test_click_save_overrun);
-//  mu_run_test(test_polygon_from_clicks);
+  mu_run_test(test_polygon_from_clicks);
   return true;
 }
 
 int
 main(void) {
   bool success = all_tests();
+  if (!success) {
+    ERR_PRINT();
+  }
   printf("Ran %d tests", tests_run);
   if (!success) {
     printf(" with Errors!:\n");
-    ERR_PRINT();
     return EXIT_FAILURE;
   } else {
     printf(", ALL PASSED.\n");
