@@ -111,9 +111,9 @@ test_polygon_from_clicks()
      0.5f,-0.5f, 0.0f,
   };
 
-  save_click(correct[0], correct[1]);
-  save_click(correct[1*3+0], correct[1*3+1]);
-  save_click(correct[2*3+0], correct[2*3+1]);
+  click_save(correct[0], correct[1]);
+  click_save(correct[1*3+0], correct[1*3+1]);
+  click_save(correct[2*3+0], correct[2*3+1]);
 
   size_t num_points = 3;
   size_t num_elements = num_points*3;
@@ -131,7 +131,7 @@ bool
 test_click_save_overrun()
 {
   for(size_t i=0; i<SIZE_CLICK_BUFFER+100e3; i++) {
-    save_click(0.0f, 0.0f);
+    click_save(0.0f, 0.0f);
   }
   return true;
 }

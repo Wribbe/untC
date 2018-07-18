@@ -475,7 +475,7 @@ transformation_get(size_t id_transformation)
 }
 
 struct v3 *
-save_click(GLfloat x, GLfloat y)
+click_save(GLfloat x, GLfloat y)
 {
   if (click_buffer_current+1 > click_buffer_last) {
     click_buffer_current = click_buffer_start;

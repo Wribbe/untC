@@ -173,4 +173,4 @@ struct m4 *
 transformation_get(size_t id_transformation);
 
 struct v3 *
-save_click(GLfloat x, GLfloat y);
+click_save(GLfloat x, GLfloat y);
