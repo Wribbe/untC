@@ -144,8 +144,14 @@ test_click_rewind_overrun()
   struct v3 * current = click_buffer_start;
   current = click_rewind(current, 1);
   mu_assert(current == click_buffer_last,
-      "Current should be at last position (%p), but was on (%p).",
+      "Rewound click should be at last position (%p), but was on (%p).",
       (void*) click_buffer_last, (void*)current);
+  struct v3 * correct = click_buffer_start + 3;
+  current = correct+3;
+  current = click_rewind(current, 3*SIZE_CLICK_BUFFER);
+  mu_assert(current == correct,
+      "Rewound click did not loop around correctly, is %p, should be %p.",
+      (void*)current, (void *)correct);
   return true;
 }
 
@@ -171,7 +177,7 @@ main(void) {
   }
   printf("Ran %d tests", tests_run);
   if (!success) {
-    printf(" with Errors!:\n");
+    printf(" with Errors! ^\n");
     return EXIT_FAILURE;
   } else {
     printf(", ALL PASSED.\n");

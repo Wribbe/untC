@@ -486,10 +486,15 @@ click_next(struct v3 * click_pointer)
 struct v3 *
 click_rewind(struct v3 * pointer, size_t num_points)
 {
-//  if (pointer - num_points < click_buffer_start) {
-//    num_points %= pointer-click_buffer_start;
-//    pointer = click_buffer_last;
-//  }
+  if (pointer - num_points < click_buffer_start) {
+    /* Remove all points possible without looping around. */
+    num_points -= (pointer-click_buffer_start);
+    /* Loop around, subtract additional point. */
+    pointer = click_buffer_last;
+    num_points--;
+    /* Call this function recursively. */
+    return click_rewind(pointer, num_points);
+  }
   return pointer - num_points;
 }
 
