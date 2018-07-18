@@ -16,7 +16,6 @@ extern size_t SIZE_MESHES[SIZE_DATA_MESHES];
 extern GLuint GL_BUFFERS[SIZE_GL_BUFFERS];
 #define SIZE_GL_VERTEX_ATTRIBS 30
 extern GLuint GL_VERTEX_ATTRIBS[SIZE_GL_VERTEX_ATTRIBS];
-#define SIZE_M4_TRANSFORMATION 3
 #define SIZE_STRING_RING_BUFFER 512
 extern char STRING_RING_BUFFER[SIZE_STRING_RING_BUFFER];
 
@@ -93,7 +92,11 @@ struct m4 {
 
 extern struct m4 m4_eye;
 
+#define SIZE_M4_TRANSFORMATION 3
 extern struct m4 M4_TRANSFORMATION[SIZE_M4_TRANSFORMATION];
+
+#define SIZE_CLICK_BUFFER 256
+extern struct v3 CLICK_BUFFER[SIZE_CLICK_BUFFER];
 
 struct obj_render {
   size_t id_vao;
@@ -112,6 +115,9 @@ main_wait(struct main_run_data * data);
 
 void
 polygon(GLfloat * data, struct v3 * point_list, size_t num_points);
+
+void
+polygon_from_clicks(GLfloat * data, size_t num_points);
 
 enum RENDER_SETTING_FLAGS {
   RENDER_DISABLE_RENDERING,
@@ -166,5 +172,5 @@ obj_transfomation_reset(size_t id_transformation);
 struct m4 *
 transformation_get(size_t id_transformation);
 
-struct v3
+struct v3 *
 save_click(GLfloat x, GLfloat y);

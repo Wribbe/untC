@@ -18,6 +18,11 @@ char * str_ring_start = STRING_RING_BUFFER;
 char * str_ring_current = STRING_RING_BUFFER;
 char * str_ring_end = STRING_RING_BUFFER + SIZE_STRING_RING_BUFFER;
 
+struct v3 CLICK_BUFFER[SIZE_CLICK_BUFFER] = {0};
+struct v3 * click_buffer_start = CLICK_BUFFER;
+struct v3 * click_buffer_current = CLICK_BUFFER;
+struct v3 * click_buffer_last = CLICK_BUFFER+SIZE_CLICK_BUFFER;
+
 GLuint program_shader = 0;
 
 const char * source_shader_default_vert = \
@@ -469,8 +474,19 @@ transformation_get(size_t id_transformation)
   return &M4_TRANSFORMATION[id_transformation];
 }
 
-struct v3
+struct v3 *
 save_click(GLfloat x, GLfloat y)
 {
-  return (struct v3){{{x, y, 0.0f}}};
+//  if (click_buffer_current+1 > click_buffer_last) {
+//    click_buffer_current = click_buffer_start;
+//  }
+  *click_buffer_current = (struct v3){{{x, y, 0.0f}}};
+  struct v3 * v3_ptr = click_buffer_current;
+  click_buffer_current++;
+  return v3_ptr;
+}
+
+void
+polygon_from_clicks(GLfloat * data, size_t num_points)
+{
 }
