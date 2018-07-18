@@ -130,7 +130,7 @@ test_polygon_from_clicks()
 bool
 test_click_save_overrun()
 {
-  for(size_t i=0; i<SIZE_CLICK_BUFFER+100e6; i++) {
+  for(size_t i=0; i<SIZE_CLICK_BUFFER+100e3; i++) {
     save_click(0.0f, 0.0f);
   }
   return true;

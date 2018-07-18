@@ -477,9 +477,9 @@ transformation_get(size_t id_transformation)
 struct v3 *
 save_click(GLfloat x, GLfloat y)
 {
-//  if (click_buffer_current+1 > click_buffer_last) {
-//    click_buffer_current = click_buffer_start;
-//  }
+  if (click_buffer_current+1 > click_buffer_last) {
+    click_buffer_current = click_buffer_start;
+  }
   *click_buffer_current = (struct v3){{{x, y, 0.0f}}};
   struct v3 * v3_ptr = click_buffer_current;
   click_buffer_current++;
