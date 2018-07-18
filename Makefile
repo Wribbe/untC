@@ -32,3 +32,5 @@ dirs:
 
 $(DIR_BIN)/% : $(DIR_SRC)/%.c gl3w.c $(LIBFILES)
 	$(CC) $(filter %.c,$^) -o $@ $(CFLAGS) $(INCLUDES) $(INCLUDES_CLONED) $(GENERAL_LIBRARIES) $(GRAPHICS_FLAGS)
+
+.PHONY: all

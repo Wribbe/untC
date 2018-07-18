@@ -127,7 +127,7 @@ mesh_set_size(size_t index, size_t size)
   SIZE_MESHES[index] = size;
 }
 
-bool mesh_data_deallocate(size_t index);
+void mesh_data_deallocate(size_t index);
 
 GLfloat *
 mesh_set_data(size_t index, GLfloat * value)
@@ -138,6 +138,12 @@ mesh_set_data(size_t index, GLfloat * value)
     DATA_MESHES[index] = value;
   }
   return DATA_MESHES[index];
+}
+
+void *
+mesh_set_data_copy(size_t index, GLfloat * value, size_t size)
+{
+  return memcpy(mesh_data(index), value, size);
 }
 
 struct obj_render obj_render = {0};
@@ -330,8 +336,7 @@ init_opengl_vertex_attributes(void)
   glBindVertexArray(VAO(0));
 }
 
-
-bool
+void
 mesh_data_deallocate(size_t index)
 {
   if (mesh_data(index) != NULL) {
@@ -339,7 +344,6 @@ mesh_data_deallocate(size_t index)
     mesh_set_data(index, NULL);
     mesh_set_size(index, 0);
   }
-  return true;
 }
 
 

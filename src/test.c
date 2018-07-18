@@ -50,7 +50,26 @@ test_allocate_mesh_data()
 {
   size_t num_floats = 300;
   size_t size = sizeof(GLfloat) * num_floats;
+  size_t mesh_index = 0;
   GLfloat data[num_floats];
+  for (size_t i=0; i<num_floats; i++) {
+    data[i] = i;
+  }
+  GLfloat * allocated_data = mesh_data_allocate(mesh_index, size);
+  mu_assert(allocated_data != NULL, "%s\n", "allocated_data was NULL.");
+  mu_assert(mesh_size(mesh_index) == size, "%s\n",
+      "Size of allocated data does not match stored size.");
+  GLfloat * index_pointer = mesh_set_data_copy(mesh_index, data, size);
+  for (size_t i=0; i<num_floats; i++) {
+    mu_assert(index_pointer[i] == data[i],
+        "Data at index_pointer[%zu] (%f), did not match data[%zu] (%f)\n",
+        i, index_pointer[i], i, data[i]);
+  }
+  /* Deallocate data. */
+  mesh_data_deallocate(mesh_index);
+  /* Destroy references to allocated memory. */
+  index_pointer = NULL;
+  mesh_set_data(mesh_index, NULL);
   return true;
 }
 
@@ -66,13 +85,13 @@ all_tests() {
 int
 main(void) {
   bool success = all_tests();
-  printf("Ran %d tests ", tests_run);
+  printf("Ran %d tests", tests_run);
   if (!success) {
-    printf("with Errors!:\n");
+    printf(" with Errors!:\n");
     ERR_PRINT();
     return EXIT_FAILURE;
   } else {
-    printf("with no errors, all passed.\n");
+    printf(", ALL PASSED.\n");
     return EXIT_SUCCESS;
   }
 }

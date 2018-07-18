@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <pthread.h>
+#include <string.h>
 
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
@@ -127,5 +128,20 @@ extern const char * source_shader_default_frag;
 GLfloat *
 mesh_set_data(size_t index, GLfloat * value);
 
+void *
+mesh_set_data_copy(size_t index, GLfloat * value, size_t size);
+
 void
 mesh_set_size(size_t index, size_t size);
+
+void *
+mesh_data_allocate(size_t index, size_t size);
+
+void
+mesh_data_deallocate(size_t index);
+
+size_t
+mesh_size(size_t index);
+
+GLfloat *
+mesh_data(size_t index);
