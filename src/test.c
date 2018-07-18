@@ -83,6 +83,7 @@ test_obj_translate()
   struct v3 pos_moved = obj_pos(id_transformation);
   mu_assert(v3_eq(&v3_delta, &pos_moved), "v3 %s was not equal to v3 %s.",
       v3_str(&v3_delta), v3_str(&pos_moved));
+  obj_transfomation_reset(id_transformation);
   return true;
 }
 

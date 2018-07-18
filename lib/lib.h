@@ -159,3 +159,6 @@ v3_str(struct v3 * v3);
 
 bool
 v3_eq(struct v3 * v1, struct v3 * v2);
+
+void
+obj_transfomation_reset(size_t id_transformation);

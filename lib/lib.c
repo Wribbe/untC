@@ -153,11 +153,13 @@ mesh_set_data_copy(size_t index, GLfloat * value, size_t size)
 
 struct obj_render obj_render = {0};
 
+void obj_transfomation_reset(size_t id_transformation);
+
 void
 init_data(void)
 {
   for (size_t i=0; i<SIZE_M4_TRANSFORMATION; i++) {
-    m4_set(i, &m4_eye);
+    obj_transfomation_reset(i);
   }
 }
 
@@ -441,4 +443,10 @@ v3_eq(struct v3 * v1, struct v3 * v2)
     }
   }
   return true;
+}
+
+void
+obj_transfomation_reset(size_t id_transformation)
+{
+  m4_set(id_transformation, &m4_eye);
 }
