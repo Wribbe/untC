@@ -13,6 +13,11 @@ struct m4 m4_eye = {{{
   {0.0f, 0.0f, 0.0f, 1.0f},
 }}};
 
+char STRING_RING_BUFFER[SIZE_STRING_RING_BUFFER] = {0};
+char * str_ring_start = STRING_RING_BUFFER;
+char * str_ring_current = STRING_RING_BUFFER;
+char * str_ring_end = STRING_RING_BUFFER + SIZE_STRING_RING_BUFFER;
+
 GLuint program_shader = 0;
 
 const char * source_shader_default_vert = \
@@ -148,11 +153,13 @@ mesh_set_data_copy(size_t index, GLfloat * value, size_t size)
 
 struct obj_render obj_render = {0};
 
+void obj_transfomation_reset(size_t id_transformation);
+
 void
 init_data(void)
 {
   for (size_t i=0; i<SIZE_M4_TRANSFORMATION; i++) {
-    m4_set(i, &m4_eye);
+    obj_transfomation_reset(i);
   }
 }
 
@@ -187,7 +194,8 @@ main_runner(void * data)
 
     GLuint location_transform = glGetUniformLocation(program_shader,
         "transform");
-    M4_TRANSFORMATION[0].x.w += 0.5f;
+    struct v3 move_triangle = {{{0.5f, 0.5f, 0.0f}}};
+    obj_translate(0, &move_triangle);
     glUniformMatrix4fv(location_transform, 1, GL_TRUE, M4_TRANSFORMATION[0].f[0]);
 
     obj_render.id_vao = VAO(0);
@@ -399,4 +407,64 @@ m4_set(size_t index, struct m4 * m4)
       M4_TRANSFORMATION[index].f[i][j] = m4->f[i][j];
     }
   }
+}
+
+struct m4 * transformation_get(size_t id_transformation);
+
+void
+obj_translate(size_t id_transformation, struct v3 * delta)
+{
+  struct m4 * t = transformation_get(id_transformation);
+  t->x.w = delta->x;
+  t->y.w = delta->y;
+  t->z.w = delta->z;
+}
+
+struct v3
+obj_pos(size_t id_transformation)
+{
+  struct m4 * t = transformation_get(id_transformation);
+  return (struct v3){{{
+    t->x.w,
+    t->y.w,
+    t->z.w,
+  }}};
+}
+
+const char *
+v3_str(struct v3 * v3)
+{
+  /* Format: { 0.0f, 0.0f, 0.0f } */
+  size_t num_chars = 20;
+  if (str_ring_current + num_chars > str_ring_end) {
+    str_ring_current = str_ring_start;
+  }
+  snprintf(str_ring_current, num_chars, "{ %.1f, %.1f, %.1f }",
+      v3->x, v3->y, v3->z);
+  const char * return_str = str_ring_current;
+  str_ring_current += num_chars;
+  return return_str;
+}
+
+bool
+v3_eq(struct v3 * v1, struct v3 * v2)
+{
+  for (size_t i=0; i<3; i++) {
+    if (v1->f[i] != v2->f[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+void
+obj_transfomation_reset(size_t id_transformation)
+{
+  m4_set(id_transformation, &m4_eye);
+}
+
+struct m4 *
+transformation_get(size_t id_transformation)
+{
+  return &M4_TRANSFORMATION[id_transformation];
 }

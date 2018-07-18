@@ -17,6 +17,8 @@ extern GLuint GL_BUFFERS[SIZE_GL_BUFFERS];
 #define SIZE_GL_VERTEX_ATTRIBS 30
 extern GLuint GL_VERTEX_ATTRIBS[SIZE_GL_VERTEX_ATTRIBS];
 #define SIZE_M4_TRANSFORMATION 3
+#define SIZE_STRING_RING_BUFFER 512
+extern char STRING_RING_BUFFER[SIZE_STRING_RING_BUFFER];
 
 #define mu_assert(test, message, ...) do { if (!(test)) { \
   snprintf(BUFF_ERROR, SIZE_BUFF_ERROR, message, __VA_ARGS__); \
@@ -145,3 +147,21 @@ mesh_size(size_t index);
 
 GLfloat *
 mesh_data(size_t index);
+
+void
+obj_translate(size_t id_transformation, struct v3 * delta);
+
+struct v3
+obj_pos(size_t id_transformation);
+
+const char *
+v3_str(struct v3 * v3);
+
+bool
+v3_eq(struct v3 * v1, struct v3 * v2);
+
+void
+obj_transfomation_reset(size_t id_transformation);
+
+struct m4 *
+transformation_get(size_t id_transformation);

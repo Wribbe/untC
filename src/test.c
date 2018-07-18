@@ -74,11 +74,42 @@ test_allocate_mesh_data()
 }
 
 bool
+test_obj_translate()
+{
+  GLfloat delta = 0.5f;
+  size_t id_transformation = 0;
+  struct v3 v3_delta = {{{delta, delta, delta}}};
+  obj_translate(id_transformation, &v3_delta);
+  struct v3 pos_moved = obj_pos(id_transformation);
+  mu_assert(v3_eq(&v3_delta, &pos_moved), "v3 %s was not equal to v3 %s.",
+      v3_str(&v3_delta), v3_str(&pos_moved));
+  obj_transfomation_reset(id_transformation);
+  struct v3 pos_zero = {{{0,0,0}}};
+  struct v3 pos_current = obj_pos(id_transformation);
+  mu_assert(v3_eq(&pos_current, &pos_zero), "v3 %s was not reset.",
+      v3_str(&pos_current));
+  return true;
+}
+
+bool
+test_v3_str_500()
+{
+  size_t num_prints = 500;
+  struct v3 v = {{{1,2,3}}};
+  for (size_t i=0; i<num_prints; i++) {
+    v3_str(&v);
+  }
+  return true;
+}
+
+bool
 all_tests() {
   mu_run_test(test_init_lib);
   mu_run_test(test_run_main_for_5);
   mu_run_test(test_polygon);
   mu_run_test(test_allocate_mesh_data);
+  mu_run_test(test_v3_str_500);
+  mu_run_test(test_obj_translate);
   return true;
 }
 

@@ -5,6 +5,7 @@ COMMAND_VALG="valgrind --suppressions=suppress.txt --leak-check=full
 --error-exitcode=${ERR_CODE}"
 # Build the latest files.
 make
+[ $? -eq 0 ] || { echo "COMPLIATION ERROR, ABORTING!" && exit; }
 # Run unit-tests with valgrind.
 ${COMMAND_VALG} ${BIN_TEST}
 # Check exit code.
