@@ -103,6 +103,13 @@ test_v3_str_500()
 }
 
 bool
+test_polygon_from_clicks()
+{
+  mu_assert(false, "%s\n", "FAILING!");
+  return true;
+}
+
+bool
 all_tests() {
   mu_run_test(test_init_lib);
   mu_run_test(test_run_main_for_5);
@@ -110,6 +117,7 @@ all_tests() {
   mu_run_test(test_allocate_mesh_data);
   mu_run_test(test_v3_str_500);
   mu_run_test(test_obj_translate);
+  mu_run_test(test_polygon_from_clicks);
   return true;
 }
 
