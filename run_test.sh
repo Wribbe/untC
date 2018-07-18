@@ -22,7 +22,7 @@ case $retval in
     echo "***** SEGMENTATION FAULT! *****"
     ;;
   *)
-    echo "No errors."
+    echo "No errors detected by valgrind."
     rm $FILE_LOG
     ;;
 esac
