@@ -484,13 +484,13 @@ click_next(struct v3 * click_pointer)
 }
 
 struct v3 *
-click_rewind(size_t num_points)
+click_rewind(struct v3 * pointer, size_t num_points)
 {
-  if (click_buffer_current - num_points < click_buffer_start) {
-    num_points %= click_buffer_current-click_buffer_start;
-    click_buffer_current = click_buffer_last;
-  }
-  return click_buffer_current - num_points;
+//  if (pointer - num_points < click_buffer_start) {
+//    num_points %= pointer-click_buffer_start;
+//    pointer = click_buffer_last;
+//  }
+  return pointer - num_points;
 }
 
 struct v3 *
@@ -507,7 +507,7 @@ click_save(GLfloat x, GLfloat y)
 void
 polygon_from_clicks(GLfloat * data, size_t num_points)
 {
-  struct v3 * current = click_rewind(num_points);
+  struct v3 * current = click_rewind(click_buffer_current, num_points);
   for (size_t i=0; i<num_points; i++) {
     memcpy(data+(i*3), current->f, sizeof(struct v3));
     current = click_next(current);

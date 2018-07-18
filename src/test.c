@@ -1,4 +1,5 @@
 #include "lib.h"
+#include "expose_for_test.h"
 
 int tests_run = 0;
 
@@ -138,6 +139,17 @@ test_click_save_overrun()
 }
 
 bool
+test_click_rewind_overrun()
+{
+  struct v3 * current = click_buffer_start;
+  current = click_rewind(current, 1);
+  mu_assert(current == click_buffer_last,
+      "Current should be at last position (%p), but was on (%p).",
+      (void*) click_buffer_last, (void*)current);
+  return true;
+}
+
+bool
 all_tests() {
   mu_run_test(test_init_lib);
   mu_run_test(test_run_main_for_5);
@@ -147,6 +159,7 @@ all_tests() {
   mu_run_test(test_obj_translate);
   mu_run_test(test_click_save_overrun);
   mu_run_test(test_polygon_from_clicks);
+  mu_run_test(test_click_rewind_overrun);
   return true;
 }
 
