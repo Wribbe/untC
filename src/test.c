@@ -134,6 +134,9 @@ test_click_save_overrun()
 {
   for(size_t i=0; i<SIZE_CLICK_BUFFER+100e3; i++) {
     click_save(0.0f, 0.0f);
+    mu_assert(click_buffer_current <= click_buffer_last,
+        "click_buffer_current (%p) is beyond click_buffer_last (%p)\n",
+        (void*)click_buffer_current, (void*)click_buffer_last);
   }
   return true;
 }
