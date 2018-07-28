@@ -477,9 +477,9 @@ transformation_get(size_t id_transformation)
 struct v3 *
 click_next(struct v3 * click_pointer)
 {
-//  if (click_pointer+1 > click_buffer_last) {
-//    return click_buffer_start;
-//  }
+  if (click_pointer+1 > click_buffer_last) {
+    return click_buffer_start;
+  }
   return click_pointer+1;
 }
 
