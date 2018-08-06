@@ -161,8 +161,12 @@ test_click_rewind_overrun()
 bool
 test_base64_encode()
 {
-  printf("%zu\n", LEN(base64_test_src));
-  mu_assert(false, "%s\n", "Seeded fault.");
+  size_t len_out = 0;
+  char * encoded = base64_encode(base64_test_src, LEN(base64_test_src),
+      &len_out);
+  mu_assert(strcmp(encoded, base64_test_correct) == 0,
+      "Encoded string: \n\n  %s\n\nDid not match correct encoding:\n\n  %s\n",
+      encoded, base64_test_correct);
   return true;
 }
 

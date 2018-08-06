@@ -518,3 +518,29 @@ polygon_from_clicks(GLfloat * data, size_t num_points)
     current = click_next(current);
   }
 }
+
+char *
+base64_encode(const char * src, size_t len_in, size_t * len_out)
+{
+  UNUSED(src); UNUSED(len_in);
+  if (len_out != NULL) {
+    *len_out = 0;
+  }
+  char * ret = malloc(sizeof(char)*5);
+  snprintf(ret, 5, "%s", "TEST");
+  ret[4] = '\0';
+  return ret;
+}
+
+char *
+base64_decode(const char * src, size_t len_in, size_t * len_out)
+{
+  UNUSED(src); UNUSED(len_in);
+  if (len_out != NULL) {
+    *len_out = 0;
+  }
+  char * ret = malloc(sizeof(char)*5);
+  snprintf(ret, 5, "%s", "TEST");
+  ret[4] = '\0';
+  return ret;
+}

@@ -34,6 +34,7 @@ extern char STRING_RING_BUFFER[SIZE_STRING_RING_BUFFER];
 #define STATUS(fmt, ...) printf("[.]: " fmt, __VA_ARGS__);
 
 #define LEN(x) sizeof(x)/sizeof(x[0])
+#define UNUSED(x) (void)(x)
 
 
 struct info_window_and_context {
