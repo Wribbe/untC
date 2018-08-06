@@ -159,6 +159,34 @@ test_click_rewind_overrun()
 }
 
 bool
+test_base64_encode()
+{
+  mu_assert(false, "%s\n", "Seeded fault.");
+  return true;
+}
+
+bool
+test_base64_decode()
+{
+  mu_assert(false, "%s\n", "Seeded fault.");
+  return true;
+}
+
+bool
+test_render_to_png()
+{
+  mu_assert(false, "%s\n", "Seeded fault.");
+  return true;
+}
+
+bool
+test_data_compare()
+{
+  mu_assert(false, "%s\n", "Seeded fault.");
+  return true;
+}
+
+bool
 all_tests() {
   mu_run_test(test_init_lib);
   mu_run_test(test_run_main_for_5);
@@ -169,6 +197,10 @@ all_tests() {
   mu_run_test(test_click_save_overrun);
   mu_run_test(test_polygon_from_clicks);
   mu_run_test(test_click_rewind_overrun);
+  mu_run_test(test_base64_encode);
+  mu_run_test(test_base64_decode);
+  mu_run_test(test_render_to_png);
+  mu_run_test(test_data_compare);
   return true;
 }
 
