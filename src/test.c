@@ -208,9 +208,12 @@ test_base64_encode()
   char * encoded = base64_encode(base64_test_src, LEN(base64_test_src),
       &len_out);
   free_queue_add(encoded, free);
+  mu_assert(len_out == LEN(base64_test_src),
+    "Encoding has wrong length: %zu, should be %zu.\n",
+    len_out, LEN(base64_test_src));
   mu_assert(strcmp(encoded, base64_test_correct) == 0,
-      "Encoded string: \n\n  %s\n\nDid not match correct encoding:\n\n  %s\n",
-      encoded, base64_test_correct);
+    "Encoded string: \n\n  %s\n\nDid not match correct encoding:\n\n  %s\n",
+    encoded, base64_test_correct);
   return true;
 }
 

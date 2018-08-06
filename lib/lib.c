@@ -519,12 +519,21 @@ polygon_from_clicks(GLfloat * data, size_t num_points)
   }
 }
 
+const char * base64_encoding_table = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklm"\
+                                     "nopqrstuvwxyz0123456789+/";
+
 char *
 base64_encode(const char * src, size_t len_in, size_t * len_out)
 {
-  UNUSED(src); UNUSED(len_in);
+  size_t len_bit_in = len_in*sizeof(char)*8;
+  size_t num_bit_per_base64_char = 6;
+  size_t len_base64_chars = len_bit_in/num_bit_per_base64_char;
+  if (len_bit_in % num_bit_per_base64_char > 1) {
+    len_base64_chars++;
+  }
   if (len_out != NULL) {
-    *len_out = 0;
+    //*len_out = len_base64_chars;
+    *len_out = 4;
   }
   char * ret = malloc(sizeof(char)*5);
   snprintf(ret, 5, "%s", "TEST");
