@@ -174,3 +174,9 @@ transformation_get(size_t id_transformation);
 
 struct v3 *
 click_save(GLfloat x, GLfloat y);
+
+char *
+base64_encode(const char * src, size_t len_in, size_t * len_out);
+
+char *
+base64_decode(const char * src, size_t len_in, size_t * len_out);
