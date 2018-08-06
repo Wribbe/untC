@@ -43,6 +43,7 @@ free_queue_process(void)
     free_queue_deallocate(free_queue_current);
     free_queue_current++;
   }
+  free_queue_current = NULL;
 }
 
 bool
