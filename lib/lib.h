@@ -33,6 +33,8 @@ extern char STRING_RING_BUFFER[SIZE_STRING_RING_BUFFER];
       glGetString(GL_SHADING_LANGUAGE_VERSION));
 #define STATUS(fmt, ...) printf("[.]: " fmt, __VA_ARGS__);
 
+#define LEN(x) sizeof(x)/sizeof(x[0])
+
 
 struct info_window_and_context {
   size_t height;

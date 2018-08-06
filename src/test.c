@@ -161,6 +161,7 @@ test_click_rewind_overrun()
 bool
 test_base64_encode()
 {
+  printf("%zu\n", LEN(base64_test_src));
   mu_assert(false, "%s\n", "Seeded fault.");
   return true;
 }
