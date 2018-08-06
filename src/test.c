@@ -205,15 +205,15 @@ bool
 test_base64_encode()
 {
   size_t len_out = 0;
-  char * encoded = base64_encode(base64_test_src, LEN(base64_test_src),
-      &len_out);
+  char * encoded = base64_encode(base64_test_text_short,
+      strlen(base64_test_text_short), &len_out);
   free_queue_add(encoded, free);
-  mu_assert(len_out == LEN(base64_test_correct),
+  mu_assert(len_out == strlen(base64_test_encoded_short),
     "Encoding has wrong length: %zu, should be %zu.\n",
-    len_out, LEN(base64_test_correct));
-  mu_assert(strcmp(encoded, base64_test_correct) == 0,
+    len_out, strlen(base64_test_encoded_short));
+  mu_assert(strcmp(encoded, base64_test_encoded_short) == 0,
     "Encoded string: \n\n  %s\n\nDid not match correct encoding:\n\n  %s\n",
-    encoded, base64_test_correct);
+    encoded, base64_test_encoded_short);
   return true;
 }
 

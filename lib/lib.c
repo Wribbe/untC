@@ -525,14 +525,18 @@ const char * base64_encoding_table = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklm"\
 char *
 base64_encode(const char * src, size_t len_in, size_t * len_out)
 {
-  size_t len_bit_in = len_in*sizeof(char)*8;
-  size_t num_bit_per_base64_char = 6;
-  size_t len_base64_chars = len_bit_in/num_bit_per_base64_char;
-  if (len_bit_in % num_bit_per_base64_char > 1) {
-    len_base64_chars++;
+  size_t num_bytes_in_chunk = 3;
+  size_t num_chunks_full = len_in/num_bytes_in_chunk;
+  size_t num_chunks_part = len_in%num_bytes_in_chunk;
+
+  size_t num_base64_char_per_chunk = 4;
+  size_t num_base64_char = num_chunks_full*num_base64_char_per_chunk;
+  if (num_chunks_part > 0) {
+    num_base64_char += num_base64_char_per_chunk;
   }
+
   if (len_out != NULL) {
-    *len_out = len_base64_chars;
+    *len_out = num_base64_char;
   }
   char * ret = malloc(sizeof(char)*5);
   snprintf(ret, 5, "%s", "TEST");
