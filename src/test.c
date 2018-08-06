@@ -39,7 +39,7 @@ free_queue_process(void)
     return;
   }
   free_queue_current = free_queue_first;
-  for (size_t i=0; i<SIZE_FREE_QUEUE; i++) {
+  while(free_queue_current <= free_queue_last) {
     free_queue_deallocate(free_queue_current);
     free_queue_current++;
   }
