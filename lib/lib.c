@@ -527,11 +527,11 @@ base64_encode(const char * src, size_t len_in, size_t * len_out)
 {
   size_t num_bytes_in_chunk = 3;
   size_t num_chunks_full = len_in/num_bytes_in_chunk;
-  size_t num_chunks_part = len_in%num_bytes_in_chunk;
+  size_t num_bytes_remaining = len_in%num_bytes_in_chunk;
 
   size_t num_base64_char_per_chunk = 4;
   size_t num_base64_char = num_chunks_full*num_base64_char_per_chunk;
-  if (num_chunks_part > 0) {
+  if (num_bytes_remaining > 0) {
     num_base64_char += num_base64_char_per_chunk;
   }
   if (len_out != NULL) {
@@ -540,11 +540,20 @@ base64_encode(const char * src, size_t len_in, size_t * len_out)
 
   char * ret = malloc(sizeof(char)*(num_base64_char+1));
   char * current = ret;
-  for(size_t i=0; i<len_in; i += num_bytes_in_chunk) {
+  for(size_t i=0; i<num_chunks_full; i++) {
     *current++ = 'A';
     *current++ = 'B';
     *current++ = 'C';
     *current++ = 'D';
+  }
+  size_t num_non_padding_bytes = num_base64_char_per_chunk-\
+                                 (num_bytes_in_chunk-num_bytes_remaining);
+  for(size_t i=0; i<num_non_padding_bytes; i++) {
+    *current++ = 'X';
+  }
+  while(current < ret+num_base64_char) {
+    *current = '=';
+    current += num_bytes_in_chunk;
   }
   ret[num_base64_char] = '\0';
   return ret;
