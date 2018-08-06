@@ -534,13 +534,19 @@ base64_encode(const char * src, size_t len_in, size_t * len_out)
   if (num_chunks_part > 0) {
     num_base64_char += num_base64_char_per_chunk;
   }
-
   if (len_out != NULL) {
     *len_out = num_base64_char;
   }
-  char * ret = malloc(sizeof(char)*5);
-  snprintf(ret, 5, "%s", "TEST");
-  ret[4] = '\0';
+
+  char * ret = malloc(sizeof(char)*(num_base64_char+1));
+  char * current = ret;
+  for(size_t i=0; i<len_in; i += num_bytes_in_chunk) {
+    *current++ = 'A';
+    *current++ = 'B';
+    *current++ = 'C';
+    *current++ = 'D';
+  }
+  ret[num_base64_char] = '\0';
   return ret;
 }
 
