@@ -539,21 +539,35 @@ base64_encode(const char * src, size_t len_in, size_t * len_out)
   }
 
   char * ret = malloc(sizeof(char)*(num_base64_char+1));
-  char * current = ret;
-  for(size_t i=0; i<num_chunks_full; i++) {
-    *current++ = 'A';
-    *current++ = 'B';
-    *current++ = 'C';
-    *current++ = 'D';
+  char * current_out = ret;
+  const char * current_in = src;
+  while(current_in < src+num_chunks_full*num_bytes_in_chunk) {
+    /* First 6 bytes by shifting first 8 two steps to the right. */
+    *current_out++ = base64_encoding_table[current_in[0] >> 2];
+    /* Remaining 2 bytes + 4 bytes of next char. */
+    *current_out++ = base64_encoding_table[(current_in[0] & 0x03) << 4 | current_in[1] >> 4];
+    /* Remaining 4 bytes + 2 bytes of next char. */
+    *current_out++ = base64_encoding_table[(current_in[1] & 0x0F) << 2 | current_in[2] >> 6];
+    /* Remaining 6 bytes. */
+    *current_out++ = base64_encoding_table[current_in[2] & 0x3F];
+    /* Advance to next byte-chunk. */
+    current_in += num_bytes_in_chunk;
   }
   size_t num_non_padding_bytes = num_base64_char_per_chunk-\
                                  (num_bytes_in_chunk-num_bytes_remaining);
-  for(size_t i=0; i<num_non_padding_bytes; i++) {
-    *current++ = 'X';
+
+  if (num_non_padding_bytes > 0) {
+    *current_out++ = base64_encoding_table[current_in[0] >> 2];
   }
-  while(current < ret+num_base64_char) {
-    *current = '=';
-    current += num_bytes_in_chunk;
+  if (num_non_padding_bytes > 1) {
+    *current_out++ = base64_encoding_table[(current_in[0] & 0x03) << 4 | current_in[1] >> 4];
+  }
+  if (num_non_padding_bytes > 2) {
+    *current_out++ = base64_encoding_table[(current_in[1] & 0x0F) << 2 | current_in[2] >> 6];
+  }
+  while(current_out < ret+num_base64_char) {
+    *current_out = '=';
+    current_out += num_bytes_in_chunk;
   }
   ret[num_base64_char] = '\0';
   return ret;
