@@ -46,6 +46,16 @@ free_queue_process(void)
   free_queue_current = NULL;
 }
 
+void
+free_queue_pop(void)
+{
+  if (free_queue_current == NULL) {
+    return;
+  }
+  free_queue_deallocate(free_queue_current);
+  free_queue_current--;
+}
+
 bool
 test_init_lib()
 {
@@ -205,15 +215,19 @@ bool
 test_base64_encode()
 {
   size_t len_out = 0;
-  char * encoded = base64_encode(base64_test_text_short,
-      strlen(base64_test_text_short), &len_out);
-  free_queue_add(encoded, free);
-  mu_assert(len_out == strlen(base64_test_encoded_short),
-    "Encoding has wrong length: %zu, should be %zu.\n",
-    len_out, strlen(base64_test_encoded_short));
-  mu_assert(strcmp(encoded, base64_test_encoded_short) == 0,
-    "Encoded string: \n\n  %s\n\nDid not match correct encoding:\n\n  %s\n",
-    encoded, base64_test_encoded_short);
+  for (size_t i=0; i<LEN(examples_base64_wiki); i++) {
+    const char * text = examples_base64_wiki[i][0];
+    const char * correct = examples_base64_wiki[i][1];
+    char * encoded = base64_encode(text, strlen(text), &len_out);
+    free_queue_add(encoded, free);
+    mu_assert(len_out == strlen(correct),
+      "Encoding has wrong length: %zu, should be %zu.\n",
+      len_out, strlen(correct));
+    mu_assert(strcmp(encoded, correct) == 0,
+      "Encoded string: \n\n  %s\n\nDid not match correct encoding:\n\n  %s\n",
+      encoded, correct);
+    free_queue_pop();
+  }
   return true;
 }
 

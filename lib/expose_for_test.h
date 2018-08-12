@@ -5,9 +5,13 @@ extern struct v3 * click_buffer_current;
 extern struct v3 * click_buffer_last;
 extern struct v3 * click_buffer_start;
 
-
-const char base64_test_text_short[] = "any carnal pleasure.";
-const char base64_test_encoded_short[] = "YW55IGNhcm5hbCBwbGVhc3VyZS4=";
+const char * examples_base64_wiki[][2] = {
+  {"any carnal pleasure.",		"YW55IGNhcm5hbCBwbGVhc3VyZS4="},
+  {"any carnal pleasure",		  "YW55IGNhcm5hbCBwbGVhc3VyZQ=="},
+  {"any carnal pleasur",	  	"YW55IGNhcm5hbCBwbGVhc3Vy"},
+  {"any carnal pleasu",	  	  "YW55IGNhcm5hbCBwbGVhc3U="},
+  {"any carnal pleas",	    	"YW55IGNhcm5hbCBwbGVhcw=="},
+};
 
 const char base64_test_text_long[] = "This is a text that should be used for testing\n"
 "encoding and decoding of base64 functionality.\n";
