@@ -567,7 +567,7 @@ base64_encode(const char * src, size_t len_in, size_t * len_out)
   }
   while(current_out < ret+num_base64_char) {
     *current_out = '=';
-    current_out += num_bytes_in_chunk;
+    current_out++;
   }
   ret[num_base64_char] = '\0';
   return ret;
