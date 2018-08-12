@@ -576,9 +576,20 @@ base64_encode(const char * src, size_t len_in, size_t * len_out)
 char *
 base64_decode(const char * src, size_t len_in, size_t * len_out)
 {
-  UNUSED(src); UNUSED(len_in);
+  size_t len_decoded = len_in;
+  size_t num_buffer_chars = 0;
+  for (const char * srcp = src+len_in-1;;srcp--) {
+    if (*srcp != '=') {
+      break;
+    }
+    len_decoded--;
+    num_buffer_chars++;
+  }
+  len_decoded = (len_decoded / 4) * 3;
+  len_decoded += 3 - num_buffer_chars;
+
   if (len_out != NULL) {
-    *len_out = 0;
+    *len_out = len_decoded;
   }
   char * ret = malloc(sizeof(char)*5);
   snprintf(ret, 5, "%s", "TEST");
