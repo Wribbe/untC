@@ -6,11 +6,11 @@ extern struct v3 * click_buffer_last;
 extern struct v3 * click_buffer_start;
 
 const char * examples_base64_wiki[][2] = {
-  {"any carnal pleasure.",		"YW55IGNhcm5hbCBwbGVhc3VyZS4="},
-  {"any carnal pleasure",		  "YW55IGNhcm5hbCBwbGVhc3VyZQ=="},
-  {"any carnal pleasur",	  	"YW55IGNhcm5hbCBwbGVhc3Vy"},
-  {"any carnal pleasu",	  	  "YW55IGNhcm5hbCBwbGVhc3U="},
-  {"any carnal pleas",	    	"YW55IGNhcm5hbCBwbGVhcw=="},
+  {"any carnal pleasure.","YW55IGNhcm5hbCBwbGVhc3VyZS4="},
+  {"any carnal pleasure","YW55IGNhcm5hbCBwbGVhc3VyZQ=="},
+  {"any carnal pleasur","YW55IGNhcm5hbCBwbGVhc3Vy"},
+  {"any carnal pleasu","YW55IGNhcm5hbCBwbGVhc3U="},
+  {"any carnal pleas","YW55IGNhcm5hbCBwbGVhcw=="},
 };
 
 const char base64_test_text_long[] = "This is a text that should be used for testing\n"
