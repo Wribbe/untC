@@ -234,6 +234,20 @@ test_base64_encode()
 bool
 test_base64_decode()
 {
+  size_t len_out = 0;
+  for (size_t i=0; i<LEN(examples_base64_wiki); i++) {
+    const char * correct = examples_base64_wiki[i][0];
+    const char * encoded = examples_base64_wiki[i][1];
+    char * decoded = base64_decode(encoded, strlen(encoded), &len_out);
+    free_queue_add(decoded, free);
+    mu_assert(len_out == strlen(correct),
+      "Text has wrong length: %zu, should be %zu.\n",
+      len_out, strlen(correct));
+    mu_assert(strcmp(decoded, correct) == 0,
+      "Decoded string: \n\n  %s\n\nDid not match correct text:\n\n  %s\n",
+      decoded, correct);
+    free_queue_pop();
+  }
   mu_assert(false, "%s\n", "Seeded fault.");
   return true;
 }
