@@ -688,6 +688,22 @@ rmmkdir(const char * path_dir)
 }
 
 
+#define FITS_OR_REALLOC(current, additional, max, buffer, increment) \
+  { \
+    size_t new_len = current + additional; \
+    if (new_len > max) { \
+      max += increment;\
+      char * larger_buffer = realloc(buffer, max); \
+      if (larger_buffer == NULL) { \
+        ERR_WRITE("Could not reallocate %zu bytes, current path: <%s>.\n", \
+            max, buffer); \
+        free(buffer); \
+        return NULL; \
+      } \
+      buffer = larger_buffer; \
+    } \
+  };
+
 char *
 path_concat(const char * root, ...)
 {
@@ -698,5 +714,46 @@ path_concat(const char * root, ...)
         root);
     return NULL;
   }
+
+  size_t len_current = strlen(root)+strlen(PATH_CONCAT_SEPARATOR);
+  size_t len_max = SIZE_PATH_CONCAT_DEFAULT;
+
+  FITS_OR_REALLOC(len_current, strlen(root), len_max, ret,
+      SIZE_PATH_CONCAT_DEFAULT);
+  const char * end = ret+len_max;
+  char * current_out = ret;
+  len_current = snprintf(current_out, end-current_out, "%s%s", root,
+      PATH_CONCAT_SEPARATOR);
+  current_out = ret + len_current;
+
+  va_list list = {0};
+  va_start(list, root);
+  const char * current_token = NULL;
+  for(;;) {
+    current_token = va_arg(list, const char *);
+    if (current_token == PATH_CONCAT_SENTINEL) {
+      break;
+    }
+    size_t len_token = strlen(current_token)+strlen(PATH_CONCAT_SEPARATOR);
+    FITS_OR_REALLOC(len_current, len_token, len_max, ret,
+        SIZE_PATH_CONCAT_DEFAULT);
+    end = ret+len_max;
+    /* Re-align current_out in case there was a realloc. */
+    current_out = ret + len_current;
+    /* Add to current string buffer, update len_current. */
+    len_current += snprintf(current_out, end-current_out, "%s%s",
+        current_token, PATH_CONCAT_SEPARATOR);
+    current_out = ret + len_current - 1;
+  }
+  va_end(list);
+  char * snug_buffer = realloc(ret, sizeof(char)*len_current);
+  if (snug_buffer == NULL) {
+    ERR_WRITE("Failed to tighten the buffer from: %zu to %zu.\n",
+        len_max, len_current);
+    free(ret);
+    return NULL;
+  }
+  ret = snug_buffer;
+  ret[len_current-1] = '\0';
   return ret;
 }
