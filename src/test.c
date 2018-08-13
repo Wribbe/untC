@@ -292,6 +292,7 @@ test_path_concat()
   const char * correct = "this" PATH_CONCAT_SEPARATOR "is" \
     PATH_CONCAT_SEPARATOR "correct";
   char * path = PATH_CONCAT("this","is","correct");
+  mu_assert(path != NULL, "Returned path was NULL and not: <%s>.", correct);
   free_queue_add(path, free);
   mu_assert(strcmp(path, correct) == 0,
       "<%s> was not equal to expected path: <%s>.\n",
@@ -350,6 +351,7 @@ main(void) {
   bool success = test_init() && test_cases();
   if (!success) {
     ERR_PRINT();
+    printf("\n");
   }
   printf("Ran %d tests", tests_run);
   if (!success) {

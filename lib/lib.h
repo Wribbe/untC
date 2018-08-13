@@ -28,7 +28,9 @@ extern GLuint GL_VERTEX_ATTRIBS[SIZE_GL_VERTEX_ATTRIBS];
 #define SIZE_STRING_RING_BUFFER 512
 extern char STRING_RING_BUFFER[SIZE_STRING_RING_BUFFER];
 
-#define ERR_PRINT(void) printf("%s\n", BUFF_ERROR); BUFF_ERROR[0] = '\0';
+#define ERR_PRINT(void) printf("[!][%s:%d:%s]: %s", \
+    __FILE__,__LINE__,__func__,BUFF_ERROR); \
+    BUFF_ERROR[0] = '\0'
 #define ERR_WRITE(fmt, ...) \
   snprintf(BUFF_ERROR, SIZE_BUFF_ERROR, fmt, __VA_ARGS__);
 #define OpenGLInfo(void) \
