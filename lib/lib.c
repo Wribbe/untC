@@ -626,3 +626,45 @@ base64_decode(const char * src, size_t len_in, size_t * len_out)
 
   return ret;
 }
+
+int
+render_to_png(const char * filename)
+{
+  UNUSED(filename);
+  return -1;
+}
+
+int
+file_read(const char * filename, char * dest)
+{
+  UNUSED(filename); UNUSED(dest);
+  return -1;
+}
+
+int
+file_write(const char * filename, const char * data)
+{
+  UNUSED(filename); UNUSED(data);
+  return -1;
+}
+
+int
+rmmkdir(const char * path_dir)
+{
+  UNUSED(path_dir);
+  return -1;
+}
+
+
+char *
+path_concat(const char * root, ...)
+{
+  char * ret = malloc(sizeof(char)*SIZE_PATH_CONCAT_DEFAULT);
+  if (ret == NULL) {
+    ERR_WRITE(
+        "Could not allocate memory for path concatenation with root: %s\n",
+        root);
+    return NULL;
+  }
+  return ret;
+}

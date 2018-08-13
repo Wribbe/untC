@@ -39,3 +39,8 @@ extern struct free_queue_unit free_queue[];
   return false; }} while (0)
 #define mu_run_test(test) do { bool success = test(); tests_run++; \
   if (!success) { return success; }} while (0)
+
+const char * test_dir_output = "test_output";
+const char * test_filename_png = "test.png";
+const char * test_file_write_string = "THIS IS THE TEXT THAT\nSHOULD BE IN THE FILE!";
+const char * test_file_write_filename = "test_file_write.txt";

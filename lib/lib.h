@@ -3,6 +3,11 @@
 #include <stdbool.h>
 #include <pthread.h>
 #include <string.h>
+#include <unistd.h>
+#include <stdarg.h>
+
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
@@ -30,6 +35,12 @@ extern char STRING_RING_BUFFER[SIZE_STRING_RING_BUFFER];
 #define LEN(x) sizeof(x)/sizeof(x[0])
 #define UNUSED(x) (void)(x)
 
+#define SIZE_PATH_CONCAT_DEFAULT 128
+#define PATH_CONCAT_SEPARATOR '/'
+#define PATH_CONCAT_SENTINEL NULL
+
+#define PATH_CONCAT(root, ...) path_concat(root, __VA_ARGS__, \
+    PATH_CONCAT_SENTINEL)
 
 struct info_window_and_context {
   size_t height;
@@ -177,3 +188,18 @@ base64_encode(const char * src, size_t len_in, size_t * len_out);
 
 char *
 base64_decode(const char * src, size_t len_in, size_t * len_out);
+
+int
+render_to_png(const char * filname);
+
+int
+file_read(const char * filename, char * dest);
+
+int
+file_write(const char * filename, const char * data);
+
+int
+rmmkdir(const char * path_dir);
+
+char *
+path_concat(const char * root, ...);

@@ -254,7 +254,28 @@ test_base64_decode()
 bool
 test_render_to_png()
 {
-  mu_assert(false, "%s\n", "Seeded fault test_render_to_png.");
+  int error_render = render_to_png(test_filename_png);
+  mu_assert(error_render == 0,
+      "render_to_png(%s) returned with error code: %d\n", test_filename_png,
+      error_render);
+  int error_file_read = file_read(test_filename_png, NULL);
+  mu_assert(error_file_read == 0,
+      "file_read(%s) returned error code: %d\n", test_filename_png,
+      error_file_read);
+  return true;
+}
+
+bool
+test_rmmkdir()
+{
+  int error_rmmkdir = rmmkdir(test_dir_output);
+  mu_assert(error_rmmkdir == 0,
+      "rmmkdir(%s) returned error-code: %d\n", test_dir_output, error_rmmkdir);
+  struct stat info = {0};
+  mu_assert(stat(test_dir_output, &info) != 0, "Could not access path %s.",
+      test_dir_output);
+  mu_assert(S_ISDIR(info.st_mode), "%s is not a directory.\n",
+      test_dir_output);
   return true;
 }
 
@@ -266,7 +287,31 @@ test_data_compare()
 }
 
 bool
-all_tests() {
+test_file_write()
+{
+  char * path_out = PATH_CONCAT(test_dir_output, test_file_write_filename);
+  free_queue_add(path_out, free);
+  int error = file_write(path_out, test_file_write_string);
+  mu_assert(error == 0, "file_write(%s) returned error: %d\n", path_out,
+      error);
+  return true;
+}
+
+bool
+test_file_read()
+{
+  return true;
+}
+
+bool
+test_init() {
+  mu_run_test(test_rmmkdir);
+  rmmkdir(test_dir_output);
+  return true;
+}
+
+bool
+test_cases() {
   mu_run_test(test_init_lib);
   mu_run_test(test_run_main_for_5);
   mu_run_test(test_polygon);
@@ -278,6 +323,8 @@ all_tests() {
   mu_run_test(test_click_rewind_overrun);
   mu_run_test(test_base64_encode);
   mu_run_test(test_base64_decode);
+  mu_run_test(test_file_write);
+  mu_run_test(test_file_read);
   mu_run_test(test_render_to_png);
   mu_run_test(test_data_compare);
   return true;
@@ -285,7 +332,7 @@ all_tests() {
 
 int
 main(void) {
-  bool success = all_tests();
+  bool success = test_init() && test_cases();
   if (!success) {
     ERR_PRINT();
   }
