@@ -649,10 +649,42 @@ file_write(const char * filename, const char * data)
 }
 
 int
+wrapper_nftw_remove(const char * fpath, const struct stat * sb, int typeflag,
+    struct FTW * ftwbuf)
+{
+  UNUSED(sb); UNUSED(typeflag); UNUSED(ftwbuf);
+  return remove(fpath);
+}
+
+int
+rmrf(const char * path_dir)
+{
+  /* Do post-order traversal and don't follow symlinks. */
+  int flags = FTW_DEPTH | FTW_PHYS;
+  int num_open_handlers = 20;
+  return nftw(path_dir, wrapper_nftw_remove, num_open_handlers, flags);
+}
+
+int
 rmmkdir(const char * path_dir)
 {
-  UNUSED(path_dir);
-  return -1;
+  struct stat info = {0};
+  int error = 0;
+  bool path_accessible = stat(path_dir, &info) == 0;
+  bool path_is_dir = path_accessible && S_ISDIR(info.st_mode);
+  if (path_is_dir) {
+    error = rmrf(path_dir);
+    if (error) {
+      ERR_WRITE("remove failed to remove %s\n", path_dir);
+      return error;
+    }
+  }
+  error = mkdir(path_dir, MKDIR_DEFAULT_MODE);
+  if (error) {
+    ERR_WRITE("mkdir failed to create %s\n", path_dir);
+    return error;
+  }
+  return 0;
 }
 
 

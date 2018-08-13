@@ -272,7 +272,7 @@ test_rmmkdir()
   mu_assert(error_rmmkdir == 0,
       "rmmkdir(%s) returned error-code: %d\n", test_dir_output, error_rmmkdir);
   struct stat info = {0};
-  mu_assert(stat(test_dir_output, &info) != 0, "Could not access path %s.",
+  mu_assert(stat(test_dir_output, &info) == 0, "Could not access path %s.",
       test_dir_output);
   mu_assert(S_ISDIR(info.st_mode), "%s is not a directory.\n",
       test_dir_output);

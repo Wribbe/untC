@@ -1,13 +1,17 @@
+#define _XOPEN_SOURCE 500
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <pthread.h>
 #include <string.h>
-#include <unistd.h>
 #include <stdarg.h>
 
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <ftw.h>
 
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
@@ -36,11 +40,12 @@ extern char STRING_RING_BUFFER[SIZE_STRING_RING_BUFFER];
 #define UNUSED(x) (void)(x)
 
 #define SIZE_PATH_CONCAT_DEFAULT 128
-#define PATH_CONCAT_SEPARATOR '/'
+#define PATH_CONCAT_SEPARATOR "/"
 #define PATH_CONCAT_SENTINEL NULL
 
 #define PATH_CONCAT(root, ...) path_concat(root, __VA_ARGS__, \
     PATH_CONCAT_SENTINEL)
+#define MKDIR_DEFAULT_MODE 755
 
 struct info_window_and_context {
   size_t height;
