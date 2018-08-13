@@ -518,3 +518,111 @@ polygon_from_clicks(GLfloat * data, size_t num_points)
     current = click_next(current);
   }
 }
+
+const char base64_encoding_table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklm"\
+                                     "nopqrstuvwxyz0123456789+/";
+
+char *
+base64_encode(const char * src, size_t len_in, size_t * len_out)
+{
+  size_t num_bytes_in_chunk = 3;
+  size_t num_chunks_full = len_in/num_bytes_in_chunk;
+  size_t num_bytes_remaining = len_in%num_bytes_in_chunk;
+
+  size_t num_base64_char_per_chunk = 4;
+  size_t num_base64_char = num_chunks_full*num_base64_char_per_chunk;
+  if (num_bytes_remaining > 0) {
+    num_base64_char += num_base64_char_per_chunk;
+  }
+  if (len_out != NULL) {
+    *len_out = num_base64_char;
+  }
+
+  char * ret = malloc(sizeof(char)*(num_base64_char+1));
+  char * current_out = ret;
+  const char * current_in = src;
+  while(current_in < src+num_chunks_full*num_bytes_in_chunk) {
+    /* First 6 bytes by shifting first 8 two steps to the right. */
+    *current_out++ = base64_encoding_table[current_in[0] >> 2];
+    /* Remaining 2 bytes + 4 bytes of next char. */
+    *current_out++ = base64_encoding_table[(current_in[0] & 0x03) << 4 | current_in[1] >> 4];
+    /* Remaining 4 bytes + 2 bytes of next char. */
+    *current_out++ = base64_encoding_table[(current_in[1] & 0x0F) << 2 | current_in[2] >> 6];
+    /* Remaining 6 bytes. */
+    *current_out++ = base64_encoding_table[current_in[2] & 0x3F];
+    /* Advance to next byte-chunk. */
+    current_in += num_bytes_in_chunk;
+  }
+  size_t num_non_padding_bytes = num_base64_char_per_chunk-\
+                                 (num_bytes_in_chunk-num_bytes_remaining);
+
+  if (num_non_padding_bytes > 0) {
+    *current_out++ = base64_encoding_table[current_in[0] >> 2];
+  }
+  if (num_non_padding_bytes > 1) {
+    *current_out++ = base64_encoding_table[(current_in[0] & 0x03) << 4 | current_in[1] >> 4];
+  }
+  if (num_non_padding_bytes > 2) {
+    *current_out++ = base64_encoding_table[(current_in[1] & 0x0F) << 2 | current_in[2] >> 6];
+  }
+  while(current_out < ret+num_base64_char) {
+    *current_out = '=';
+    current_out++;
+  }
+  ret[num_base64_char] = '\0';
+  return ret;
+}
+
+bool bool_base64_decodetable_init = false;
+#define SIZE_BASE64_DECODETABLE 256
+#define BASE64_UNDEF 0
+char base64_decode_table[SIZE_BASE64_DECODETABLE] = {BASE64_UNDEF};
+
+char *
+base64_decode(const char * src, size_t len_in, size_t * len_out)
+{
+  size_t len_decoded = len_in;
+  size_t num_buffer_chars = 0;
+  for (const char * srcp = src+len_in-1; *srcp == '='; srcp--) {
+    len_decoded--;
+    num_buffer_chars++;
+  }
+  len_decoded = (len_decoded / 4) * 3;
+
+  if (!bool_base64_decodetable_init) {
+    for (size_t i=0; i<sizeof(base64_encoding_table)-1; i++) {
+      base64_decode_table[(int)base64_encoding_table[i]] = (char) i;
+    }
+    bool_base64_decodetable_init = true;
+  }
+
+  size_t num_partial_bytes = num_buffer_chars > 0 ? 3 - num_buffer_chars : 0;
+  len_decoded += num_partial_bytes;
+
+  if (len_out != NULL) {
+    *len_out = len_decoded;
+  }
+
+  char * ret = malloc(sizeof(char)*(len_decoded+1));
+
+  const char * char_in = src;
+  char * char_out = ret;
+
+  for (size_t i=0; i<len_decoded/3; i++) {
+    *char_out++ = base64_decode_table[(int)char_in[0]] << 2 | base64_decode_table[(int)char_in[1]] >> 4;
+    *char_out++ = base64_decode_table[(int)char_in[1]] << 4 | base64_decode_table[(int)char_in[2]] >> 2;
+    *char_out++ = base64_decode_table[(int)char_in[2]] << 6 | base64_decode_table[(int)char_in[3]];
+    char_in += 4;
+  }
+
+  if (num_partial_bytes > 0) {
+    *char_out++ = base64_decode_table[(int)char_in[0]] << 2 | base64_decode_table[(int)char_in[1]] >> 4;
+  }
+  if (num_partial_bytes > 1) {
+    *char_out++ = base64_decode_table[(int)char_in[1]] << 4 | base64_decode_table[(int)char_in[2]] >> 2;
+  }
+
+  ret[len_decoded] = '\0';
+
+  return ret;
+}

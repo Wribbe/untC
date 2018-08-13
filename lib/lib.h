@@ -19,12 +19,6 @@ extern GLuint GL_VERTEX_ATTRIBS[SIZE_GL_VERTEX_ATTRIBS];
 #define SIZE_STRING_RING_BUFFER 512
 extern char STRING_RING_BUFFER[SIZE_STRING_RING_BUFFER];
 
-#define mu_assert(test, message, ...) do { if (!(test)) { \
-  snprintf(BUFF_ERROR, SIZE_BUFF_ERROR, message, __VA_ARGS__); \
-  return false; }} while (0)
-#define mu_run_test(test) do { bool success = test(); tests_run++; \
-  if (!success) { return success; }} while (0)
-
 #define ERR_PRINT(void) printf("%s\n", BUFF_ERROR);
 #define ERR_WRITE(fmt, ...) \
   snprintf(BUFF_ERROR, SIZE_BUFF_ERROR, fmt, __VA_ARGS__);
@@ -32,6 +26,9 @@ extern char STRING_RING_BUFFER[SIZE_STRING_RING_BUFFER];
   printf("OpenGL: %s, GLSL: %s\n", glGetString(GL_VERSION), \
       glGetString(GL_SHADING_LANGUAGE_VERSION));
 #define STATUS(fmt, ...) printf("[.]: " fmt, __VA_ARGS__);
+
+#define LEN(x) sizeof(x)/sizeof(x[0])
+#define UNUSED(x) (void)(x)
 
 
 struct info_window_and_context {
@@ -174,3 +171,9 @@ transformation_get(size_t id_transformation);
 
 struct v3 *
 click_save(GLfloat x, GLfloat y);
+
+char *
+base64_encode(const char * src, size_t len_in, size_t * len_out);
+
+char *
+base64_decode(const char * src, size_t len_in, size_t * len_out);

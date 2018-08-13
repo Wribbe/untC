@@ -2,6 +2,59 @@
 #include "expose_for_test.h"
 
 int tests_run = 0;
+struct free_queue_unit free_queue[SIZE_FREE_QUEUE];
+struct free_queue_unit * free_queue_first = free_queue;
+struct free_queue_unit * free_queue_last = free_queue+SIZE_FREE_QUEUE-1;
+struct free_queue_unit * free_queue_current = NULL;
+
+void
+free_queue_deallocate(struct free_queue_unit * unit)
+{
+  if (unit->data != NULL) {
+    unit->dealloc_function(free_queue_current->data);
+    unit->data = NULL;
+  }
+}
+
+void
+free_queue_add(void * data, dealloc_function dealloc_function)
+{
+  if (free_queue_current == NULL) {
+    free_queue_current = free_queue_first;
+  } else if (free_queue_current+1 > free_queue_last) {
+    free_queue_current = free_queue_first;
+  }
+  if (free_queue_current->data != NULL) {
+    free_queue_deallocate(free_queue_current);
+  }
+  free_queue_current->data = data;
+  free_queue_current->dealloc_function = dealloc_function;
+  free_queue_current++;
+}
+
+void
+free_queue_process(void)
+{
+  if (free_queue_current == NULL) {
+    return;
+  }
+  free_queue_current = free_queue_first;
+  while(free_queue_current <= free_queue_last) {
+    free_queue_deallocate(free_queue_current);
+    free_queue_current++;
+  }
+  free_queue_current = NULL;
+}
+
+void
+free_queue_pop(void)
+{
+  if (free_queue_current == NULL) {
+    return;
+  }
+  free_queue_deallocate(free_queue_current);
+  free_queue_current--;
+}
 
 bool
 test_init_lib()
@@ -161,14 +214,40 @@ test_click_rewind_overrun()
 bool
 test_base64_encode()
 {
-  mu_assert(false, "%s\n", "Seeded fault.");
+  size_t len_out = 0;
+  for (size_t i=0; i<LEN(examples_base64_wiki); i++) {
+    const char * text = examples_base64_wiki[i][0];
+    const char * correct = examples_base64_wiki[i][1];
+    char * encoded = base64_encode(text, strlen(text), &len_out);
+    free_queue_add(encoded, free);
+    mu_assert(len_out == strlen(correct),
+      "Encoding has wrong length: %zu, should be %zu.\n",
+      len_out, strlen(correct));
+    mu_assert(strcmp(encoded, correct) == 0,
+      "Encoded string: \n\n  %s\n\nDid not match correct encoding:\n\n  %s\n",
+      encoded, correct);
+    free_queue_pop();
+  }
   return true;
 }
 
 bool
 test_base64_decode()
 {
-  mu_assert(false, "%s\n", "Seeded fault.");
+  size_t len_out = 0;
+  for (size_t i=0; i<LEN(examples_base64_wiki); i++) {
+    const char * correct = examples_base64_wiki[i][0];
+    const char * encoded = examples_base64_wiki[i][1];
+    char * decoded = base64_decode(encoded, strlen(encoded), &len_out);
+    free_queue_add(decoded, free);
+    mu_assert(len_out == strlen(correct),
+      "Text (correct: %s) has wrong length: %zu, should be %zu.\n",
+      correct, len_out, strlen(correct));
+    mu_assert(strcmp(decoded, correct) == 0,
+      "Decoded string: \n\n  %s\n\nDid not match correct text:\n\n  %s\n",
+      decoded, correct);
+    free_queue_pop();
+  }
   return true;
 }
 
