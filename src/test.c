@@ -287,6 +287,20 @@ test_data_compare()
 }
 
 bool
+test_path_concat()
+{
+  const char * correct = "this" PATH_CONCAT_SEPARATOR "is" \
+    PATH_CONCAT_SEPARATOR "correct";
+  char * path = PATH_CONCAT("this","is","correct");
+  free_queue_add(path, free);
+  mu_assert(strcmp(path, correct) == 0,
+      "<%s> was not equal to expected path: <%s>.\n",
+      path, correct);
+  return true;
+}
+
+
+bool
 test_file_write()
 {
   char * path_out = PATH_CONCAT(test_dir_output, test_file_write_filename);
@@ -307,6 +321,7 @@ bool
 test_init() {
   mu_run_test(test_rmmkdir);
   rmmkdir(test_dir_output);
+  mu_run_test(test_path_concat);
   return true;
 }
 
