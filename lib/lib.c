@@ -519,7 +519,7 @@ polygon_from_clicks(GLfloat * data, size_t num_points)
   }
 }
 
-const char * base64_encoding_table = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklm"\
+const char base64_encoding_table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklm"\
                                      "nopqrstuvwxyz0123456789+/";
 
 char *
