@@ -34,6 +34,9 @@ extern struct free_queue_unit free_queue[];
 #define SIZE_FREE_QUEUE 256
 
 #define mu_assert(test, message, ...) do { if (!(test)) { \
+  if (strlen(BUFF_ERROR > 0) { \
+      ERR_PRINT(); \
+  } \
   snprintf(BUFF_ERROR, SIZE_BUFF_ERROR, "%s:%d:%s(): " \
       message,__FILE__,__LINE__,__func__,__VA_ARGS__); \
   free_queue_process(); \
