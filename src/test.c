@@ -241,14 +241,13 @@ test_base64_decode()
     char * decoded = base64_decode(encoded, strlen(encoded), &len_out);
     free_queue_add(decoded, free);
     mu_assert(len_out == strlen(correct),
-      "Text has wrong length: %zu, should be %zu.\n",
-      len_out, strlen(correct));
+      "Text (correct: %s) has wrong length: %zu, should be %zu.\n",
+      correct, len_out, strlen(correct));
     mu_assert(strcmp(decoded, correct) == 0,
       "Decoded string: \n\n  %s\n\nDid not match correct text:\n\n  %s\n",
       decoded, correct);
     free_queue_pop();
   }
-  mu_assert(false, "%s\n", "Seeded fault.");
   return true;
 }
 

@@ -596,7 +596,7 @@ base64_decode(const char * src, size_t len_in, size_t * len_out)
     bool_base64_decodetable_init = true;
   }
 
-  size_t num_partial_bytes = 3 - num_buffer_chars;
+  size_t num_partial_bytes = num_buffer_chars > 0 ? 3 - num_buffer_chars : 0;
   len_decoded += num_partial_bytes;
 
   if (len_out != NULL) {
@@ -614,6 +614,15 @@ base64_decode(const char * src, size_t len_in, size_t * len_out)
     *char_out++ = base64_decode_table[(int)char_in[2]] << 6 | base64_decode_table[(int)char_in[3]];
     char_in += 4;
   }
+
+  if (num_partial_bytes > 0) {
+    *char_out++ = base64_decode_table[(int)char_in[0]] << 2 | base64_decode_table[(int)char_in[1]] >> 4;
+  }
+  if (num_partial_bytes > 1) {
+    *char_out++ = base64_decode_table[(int)char_in[1]] << 4 | base64_decode_table[(int)char_in[2]] >> 2;
+  }
+
+  ret[len_decoded] = '\0';
 
   return ret;
 }
