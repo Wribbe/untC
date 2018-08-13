@@ -175,14 +175,14 @@ test_base64_decode()
 bool
 test_render_to_png()
 {
-  mu_assert(false, "%s\n", "Seeded fault.");
+  mu_assert(false, "%s\n", "Seeded fault test_render_to_png.");
   return true;
 }
 
 bool
 test_data_compare()
 {
-  mu_assert(false, "%s\n", "Seeded fault.");
+  mu_assert(false, "%s\n", "Seeded fault test_data_compare.");
   return true;
 }
 
