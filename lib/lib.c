@@ -573,26 +573,47 @@ base64_encode(const char * src, size_t len_in, size_t * len_out)
   return ret;
 }
 
+bool bool_base64_decodetable_init = false;
+#define SIZE_BASE64_DECODETABLE 256
+#define BASE64_UNDEF 0
+char base64_decode_table[SIZE_BASE64_DECODETABLE] = {BASE64_UNDEF};
+
 char *
 base64_decode(const char * src, size_t len_in, size_t * len_out)
 {
   size_t len_decoded = len_in;
   size_t num_buffer_chars = 0;
-  for (const char * srcp = src+len_in-1;;srcp--) {
-    if (*srcp != '=') {
-      break;
-    }
+  for (const char * srcp = src+len_in-1; *srcp == '='; srcp--) {
     len_decoded--;
     num_buffer_chars++;
   }
   len_decoded = (len_decoded / 4) * 3;
-  len_decoded += 3 - num_buffer_chars;
+
+  if (!bool_base64_decodetable_init) {
+    for (size_t i=0; i<sizeof(base64_encoding_table)-1; i++) {
+      base64_decode_table[(int)base64_encoding_table[i]] = (char) i;
+    }
+    bool_base64_decodetable_init = true;
+  }
+
+  size_t num_partial_bytes = 3 - num_buffer_chars;
+  len_decoded += num_partial_bytes;
 
   if (len_out != NULL) {
     *len_out = len_decoded;
   }
-  char * ret = malloc(sizeof(char)*5);
-  snprintf(ret, 5, "%s", "TEST");
-  ret[4] = '\0';
+
+  char * ret = malloc(sizeof(char)*(len_decoded+1));
+
+  const char * char_in = src;
+  char * char_out = ret;
+
+  for (size_t i=0; i<len_decoded/3; i++) {
+    *char_out++ = base64_decode_table[(int)char_in[0]] << 2 | base64_decode_table[(int)char_in[1]] >> 4;
+    *char_out++ = base64_decode_table[(int)char_in[1]] << 4 | base64_decode_table[(int)char_in[2]] >> 2;
+    *char_out++ = base64_decode_table[(int)char_in[2]] << 6 | base64_decode_table[(int)char_in[3]];
+    char_in += 4;
+  }
+
   return ret;
 }
