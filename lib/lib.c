@@ -44,6 +44,32 @@ const char * source_shader_default_frag = \
 " frag_color = vec4(1.0);\n"
 "}\n";
 
+const char * source_shader_screenquad_vert = \
+"#version 330 core\n"
+"layout (location = 0) in vec2 in_pos;\n"
+"layout (location = 1) in vec2 in_texcoords;\n"
+"\n"
+"out vec2 out_texcoords;\n"
+"\n"
+"void main()\n"
+"{\n"
+"   gl_Position = vec4(in_pos.x, in_pos.y, 1.0);\n"
+"   out_texcoords = in_texcoords;\n"
+"}\n";
+
+const char * source_shader_screenquad_frag = \
+"#version 330 core\n"
+"in vec2 in_texcoords;\n"
+"\n"
+"uniform sampler2D texture_screen;\n"
+"\n"
+"out vec4 fragment_color;\n"
+"\n"
+"void main()\n"
+"{\n"
+"   fragment_color = texture(texture_screen, in_texcoords);\n"
+"}\n";
+
 struct info_window_and_context MAIN_CONTEXT = {
   800,
   600,
