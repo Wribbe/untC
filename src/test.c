@@ -1,5 +1,5 @@
-#include "lib.h"
-#include "expose_for_test.h"
+#include "../lib/lib.h"
+#include "../lib/expose_for_test.h"
 
 int tests_run = 0;
 struct free_queue_unit free_queue[SIZE_FREE_QUEUE];
