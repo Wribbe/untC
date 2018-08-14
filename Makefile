@@ -15,7 +15,7 @@ INCLUDES := -Ilib -I$(DIR_LIBPNG) -L$(DIR_LIBPNG)
 
 CC := gcc
 
-EXECUTABLES := $(patsubst $(DIR_SRC)/%.c,$(DIR_BIN)/%,$(wildcard $(DIR_SRC)/*.c))
+EXECUTABLES = $(patsubst $(DIR_SRC)/%.c,$(DIR_BIN)/%,$(wildcard $(DIR_SRC)/*.c))
 LIBFILES := $(wildcard $(DIR_LIB)/*)
 
 SYMLINKS := lib/png.h lib/png.c lib/pngerror.c lib/pngmem.c
