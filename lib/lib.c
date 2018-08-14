@@ -71,6 +71,16 @@ const char * source_shader_screenquad_frag = \
 "   fragment_color = texture(texture_screen, vert_texcoords);\n"
 "}\n";
 
+GLfloat vertices_screenquad[] = {
+  -1.0f,  1.0f,  0.0f, 1.0f,
+  -1.0f, -1.0f,  0.0f, 0.0f,
+   1.0f, -1.0f,  1.0f, 0.0f,
+
+  -1.0f,  1.0f,  0.0f, 1.0f,
+   1.0f, -1.0f,  1.0f, 0.0f,
+   1.0f,  1.0f,  1.0f, 1.0f,
+};
+
 struct info_window_and_context MAIN_CONTEXT = {
   800,
   600,
