@@ -258,7 +258,7 @@ test_render_to_png()
   mu_assert(error_render == 0,
       "render_to_png(%s) returned with error code: %d\n", test_filename_png,
       error_render);
-  int error_file_read = file_read(test_filename_png, NULL);
+  int error_file_read = file_read(test_filename_png, NULL, NULL);
   mu_assert(error_file_read == 0,
       "file_read(%s) returned error code: %d\n", test_filename_png,
       error_file_read);
@@ -303,19 +303,28 @@ test_path_concat()
 
 
 bool
-test_file_write()
+test_file_read_and_write()
 {
-  char * path_out = PATH_CONCAT(test_dir_output, test_file_write_filename);
-  free_queue_add(path_out, free);
-  int error = file_write(path_out, test_file_write_string);
-  mu_assert(error == 0, "file_write(%s) returned error: %d\n", path_out,
+  char * path_file = PATH_CONCAT(test_dir_output, test_file_write_filename);
+  free_queue_add(path_file, free);
+  int error = file_write(path_file, test_file_write_string);
+  mu_assert(error == 0, "file_write(%s, %s) returned error: %d\n", path_file,
+      test_file_write_string, error);
+  char * text_read = NULL;
+  size_t size_read = 0;
+  error = file_read(path_file, &text_read, &size_read);
+  if (text_read != NULL) {
+    free_queue_add(text_read, free);
+  }
+  mu_assert(error == 0, "file_read(%s): returned error: %d\n", path_file,
       error);
-  return true;
-}
-
-bool
-test_file_read()
-{
+  mu_assert(size_read == strlen(test_file_write_string),
+      "Wrong data size returned by file_read(%s), expected %zu, got %zu.\n",
+      path_file, size_read, strlen(test_file_write_string));
+  mu_assert(strcmp(text_read, test_file_write_string) == 0,
+      "Read string <%s> was not expected string <%s>.\n", text_read,
+      test_file_write_string);
+  free_queue_process();
   return true;
 }
 
@@ -340,8 +349,7 @@ test_cases() {
   mu_run_test(test_click_rewind_overrun);
   mu_run_test(test_base64_encode);
   mu_run_test(test_base64_decode);
-  mu_run_test(test_file_write);
-  mu_run_test(test_file_read);
+  mu_run_test(test_file_read_and_write);
   mu_run_test(test_render_to_png);
   mu_run_test(test_data_compare);
   return true;

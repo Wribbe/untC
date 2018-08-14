@@ -635,17 +635,54 @@ render_to_png(const char * filename)
 }
 
 int
-file_read(const char * filename, char * dest)
+file_read(const char * filename, char ** dest, size_t * size_read)
 {
-  UNUSED(filename); UNUSED(dest);
+  FILE * fh = fopen(filename, "r");
+  int error = 0;
+  if (fh == NULL) {
+    ERR_WRITE("Could not open %s for reading.\n", filename);
+    goto error;
+  }
+  error = fseek(fh, 0L, SEEK_END);
+  if (error) {
+    ERR_WRITE("fseek SEEK_END failed for %s.\n", filename);
+    goto error;
+  }
+  size_t size_data = ftell(fh);
+  rewind(fh);
+  char * return_data = malloc(sizeof(char)*(size_data+1));
+  if (return_data == NULL) {
+    ERR_WRITE("Could not allocate memory for reading data from %s.\n",
+        filename);
+    goto error;
+  }
+  fread(return_data, size_data, 1, fh);
+  fclose(fh);
+  if(size_read != NULL) {
+    *size_read = size_data;
+  }
+  return_data[size_data] = '\0';
+  *dest = return_data;
+  return 0;
+error:
+  if (fh != NULL) {
+    fclose(fh);
+  }
   return -1;
 }
 
 int
 file_write(const char * filename, const char * data)
 {
-  UNUSED(filename); UNUSED(data);
-  return -1;
+  FILE * fh = fopen(filename, "w");
+  if (fh == NULL) {
+    ERR_WRITE("Could not open %s, for writing.\n", filename);
+    return -1;
+  }
+  size_t size_data = strlen(data);
+  fwrite(data, size_data, 1, fh);
+  fclose(fh);
+  return 0;
 }
 
 int

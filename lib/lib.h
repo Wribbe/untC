@@ -200,7 +200,7 @@ int
 render_to_png(const char * filname);
 
 int
-file_read(const char * filename, char * dest);
+file_read(const char * filename, char ** dest, size_t * size_read);
 
 int
 file_write(const char * filename, const char * data);
