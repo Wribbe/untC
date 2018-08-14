@@ -24,6 +24,7 @@ struct v3 * click_buffer_current = CLICK_BUFFER;
 struct v3 * click_buffer_last = CLICK_BUFFER+(SIZE_CLICK_BUFFER-1);
 
 GLuint program_shader = 0;
+GLuint program_screenquad = 0;
 
 const char * source_shader_default_vert = \
 "#version 330 core\n"
@@ -49,17 +50,17 @@ const char * source_shader_screenquad_vert = \
 "layout (location = 0) in vec2 in_pos;\n"
 "layout (location = 1) in vec2 in_texcoords;\n"
 "\n"
-"out vec2 out_texcoords;\n"
+"out vec2 vert_texcoords;\n"
 "\n"
 "void main()\n"
 "{\n"
-"   gl_Position = vec4(in_pos.x, in_pos.y, 1.0);\n"
-"   out_texcoords = in_texcoords;\n"
+"   gl_Position = vec4(in_pos.x, in_pos.y, 0.0, 1.0);\n"
+"   vert_texcoords = in_texcoords;\n"
 "}\n";
 
 const char * source_shader_screenquad_frag = \
 "#version 330 core\n"
-"in vec2 in_texcoords;\n"
+"in vec2 vert_texcoords;\n"
 "\n"
 "uniform sampler2D texture_screen;\n"
 "\n"
@@ -67,7 +68,7 @@ const char * source_shader_screenquad_frag = \
 "\n"
 "void main()\n"
 "{\n"
-"   fragment_color = texture(texture_screen, in_texcoords);\n"
+"   fragment_color = texture(texture_screen, vert_texcoords);\n"
 "}\n";
 
 struct info_window_and_context MAIN_CONTEXT = {
@@ -358,7 +359,7 @@ link_shader_program(GLuint id, GLuint sh1, GLuint sh2)
 {
   glAttachShader(id, sh1);
   glAttachShader(id, sh2);
-  glLinkProgram(program_shader);
+  glLinkProgram(id);
 
   int succ = 0;
   glGetProgramiv(id, GL_LINK_STATUS, &succ);
@@ -386,17 +387,41 @@ init_default_shaders(void)
     ERR_PRINT();
     return;
   }
-  STATUS("%s\n", "Shaders compiled successfully.");
+  STATUS("%s\n", "Default shaders compiled successfully.");
 
   program_shader = glCreateProgram();
   if (!link_shader_program(program_shader, vert, frag)) {
     ERR_PRINT();
+    return;
   }
 
-  STATUS("%s\n", "Shader program linked successfully.");
+  STATUS("%s\n", "Default shader program linked successfully.");
   glDeleteShader(vert);
   glDeleteShader(frag);
-  STATUS("%s\n", "Deleted compiled shaders.");
+  STATUS("%s\n", "Deleted compiled default shaders.");
+
+  succ = compile_shader(source_shader_screenquad_vert, &vert, GL_VERTEX_SHADER);
+  if (!succ) {
+    ERR_PRINT();
+    return;
+  }
+  succ = compile_shader(source_shader_screenquad_frag, &frag, GL_FRAGMENT_SHADER);
+  if (!succ) {
+    ERR_PRINT();
+    return;
+  }
+  STATUS("%s\n", "Screen-quad shaders compiled successfully.");
+
+  program_screenquad = glCreateProgram();
+  if (!link_shader_program(program_screenquad, vert, frag)) {
+    ERR_PRINT();
+    return;
+  }
+
+  STATUS("%s\n", "Screen-quad shader program linked successfully.");
+  glDeleteShader(vert);
+  glDeleteShader(frag);
+  STATUS("%s\n", "Deleted compiled default shaders.");
 }
 
 
