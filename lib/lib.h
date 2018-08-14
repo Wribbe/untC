@@ -47,7 +47,7 @@ extern char STRING_RING_BUFFER[SIZE_STRING_RING_BUFFER];
 
 #define PATH_CONCAT(root, ...) path_concat(root, __VA_ARGS__, \
     PATH_CONCAT_SENTINEL)
-#define MKDIR_DEFAULT_MODE 755
+#define MKDIR_DEFAULT_MODE 0755
 
 struct info_window_and_context {
   size_t height;
