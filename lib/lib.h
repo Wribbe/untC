@@ -47,7 +47,7 @@ extern char STRING_RING_BUFFER[SIZE_STRING_RING_BUFFER];
 
 #define PATH_CONCAT(root, ...) path_concat(root, __VA_ARGS__, \
     PATH_CONCAT_SENTINEL)
-#define MKDIR_DEFAULT_MODE 755
+#define MKDIR_DEFAULT_MODE 0755
 
 struct info_window_and_context {
   size_t height;
@@ -200,7 +200,7 @@ int
 render_to_png(const char * filname);
 
 int
-file_read(const char * filename, char * dest);
+file_read(const char * filename, char ** dest, size_t * size_read);
 
 int
 file_write(const char * filename, const char * data);
