@@ -3,3 +3,8 @@ gl3w
 vgcore*
 test.log
 test_output
+lib/png.c
+lib/png.h
+lib/pngerror.c
+lib/pngmem.c
+libpng/

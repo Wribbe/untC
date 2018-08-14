@@ -16,6 +16,8 @@
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 
+#include "png.h"
+
 #define SIZE_BUFF_ERROR 512
 extern char BUFF_ERROR[SIZE_BUFF_ERROR];
 #define SIZE_DATA_MESHES 128
