@@ -297,6 +297,7 @@ test_path_concat()
   mu_assert(strcmp(path, correct) == 0,
       "<%s> was not equal to expected path: <%s>.\n",
       path, correct);
+  free_queue_process();
   return true;
 }
 
