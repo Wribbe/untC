@@ -47,15 +47,15 @@ $(DIR_BIN)/% : $(DIR_SRC)/%.c gl3w.c $(LIBFILES)
 	$(CC) $(filter %.c,$^) -o $@ $(CFLAGS) $(INCLUDES) $(INCLUDES_CLONED) $(GENERAL_LIBRARIES) $(GRAPHICS_FLAGS)
 
 lib/png.h:
-	@ln -rs $(DIR_LIBPNG)/png.h $@
+	@ln -rsf $(DIR_LIBPNG)/png.h $@
 
 lib/png.c:
-	@ln -rs $(DIR_LIBPNG)/png.c $@
+	@ln -rsf $(DIR_LIBPNG)/png.c $@
 
 lib/pngerror.c:
-	@ln -rs $(DIR_LIBPNG)/pngerror.c $@
+	@ln -rsf $(DIR_LIBPNG)/pngerror.c $@
 
 lib/pngmem.c:
-	@ln -rs $(DIR_LIBPNG)/pngmem.c $@
+	@ln -rsf $(DIR_LIBPNG)/pngmem.c $@
 
 .PHONY: all
