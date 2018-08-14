@@ -26,6 +26,16 @@ struct v3 * click_buffer_last = CLICK_BUFFER+(SIZE_CLICK_BUFFER-1);
 GLuint program_shader = 0;
 GLuint program_screenquad = 0;
 
+enum id_vaos {
+  id_vao_default,
+  id_vao_screenquad,
+};
+
+enum id_vbos {
+  id_vbo_default,
+  id_vbo_screenquad,
+};
+
 const char * source_shader_default_vert = \
 "#version 330 core\n"
 "layout (location = 0) in vec3 pos;\n"
