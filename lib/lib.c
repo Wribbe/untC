@@ -24,6 +24,18 @@ struct v3 * click_buffer_current = CLICK_BUFFER;
 struct v3 * click_buffer_last = CLICK_BUFFER+(SIZE_CLICK_BUFFER-1);
 
 GLuint program_shader = 0;
+GLuint program_screenquad = 0;
+GLuint id_mesh_screenquad = 1;
+
+enum id_vaos {
+  id_vao_default,
+  id_vao_screenquad,
+};
+
+enum id_vbos {
+  id_vbo_default,
+  id_vbo_screenquad,
+};
 
 const char * source_shader_default_vert = \
 "#version 330 core\n"
@@ -44,6 +56,43 @@ const char * source_shader_default_frag = \
 " frag_color = vec4(1.0);\n"
 "}\n";
 
+const char * source_shader_screenquad_vert = \
+"#version 330 core\n"
+"layout (location = 0) in vec2 in_pos;\n"
+"layout (location = 1) in vec2 in_texcoords;\n"
+"\n"
+"out vec2 vert_texcoords;\n"
+"\n"
+"void main()\n"
+"{\n"
+"   gl_Position = vec4(in_pos.x, in_pos.y, 0.0, 1.0);\n"
+"   vert_texcoords = in_texcoords;\n"
+"}\n";
+
+const char * source_shader_screenquad_frag = \
+"#version 330 core\n"
+"in vec2 vert_texcoords;\n"
+"\n"
+"uniform sampler2D texture_screen;\n"
+"\n"
+"out vec4 fragment_color;\n"
+"\n"
+"void main()\n"
+"{\n"
+"   fragment_color = texture(texture_screen, vert_texcoords);\n"
+"   //fragment_color = vec4(vert_texcoords, 0.0f, 1.0f);\n"
+"}\n";
+
+GLfloat vertices_screenquad[] = {
+  -1.0f,  1.0f,  0.0f, 1.0f,
+  -1.0f, -1.0f,  0.0f, 0.0f,
+   1.0f, -1.0f,  1.0f, 0.0f,
+
+  -1.0f,  1.0f,  0.0f, 1.0f,
+   1.0f, -1.0f,  1.0f, 0.0f,
+   1.0f,  1.0f,  1.0f, 1.0f,
+};
+
 struct info_window_and_context MAIN_CONTEXT = {
   800,
   600,
@@ -58,8 +107,9 @@ window_create(struct info_window_and_context * context) {
   if (context == NULL) {
     context = &MAIN_CONTEXT;
   }
-  GLFWwindow * window = glfwCreateWindow(context->height,
+  GLFWwindow * window = glfwCreateWindow(
       context->width,
+      context->height,
       context->title,
       NULL,
       NULL);
@@ -201,19 +251,90 @@ main_runner(void * data)
         "transform");
     struct v3 move_triangle = {{{0.5f, 0.5f, 0.0f}}};
     obj_translate(0, &move_triangle);
-    glUniformMatrix4fv(location_transform, 1, GL_TRUE, M4_TRANSFORMATION[0].f[0]);
+    glUniformMatrix4fv(location_transform, 1, GL_TRUE,
+        M4_TRANSFORMATION[0].f[0]);
+    glUseProgram(0);
+
+    glBindVertexArray(VAO(id_vao_screenquad));
+    glBindBuffer(GL_ARRAY_BUFFER, VBO(id_vbo_screenquad));
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_screenquad),
+        &vertices_screenquad, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+        (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+        (void*)(2*sizeof(GLfloat)));
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     obj_render.id_vao = VAO(0);
     obj_render.id_program = program_shader;
     obj_render.id_transformation = 0;
+
   }
+
+  GLuint fbo = 0;
+  glGenFramebuffers(1, &fbo);
+  glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+  GLuint texture_colorbuffer = 0;
+  glGenTextures(1, &texture_colorbuffer);
+  glBindTexture(GL_TEXTURE_2D, texture_colorbuffer);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16, MAIN_CONTEXT.width,
+      MAIN_CONTEXT.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+      texture_colorbuffer, 0);
+
+  GLuint rbo = 0;
+  glGenRenderbuffers(1, &rbo);
+  glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8,
+      MAIN_CONTEXT.width, MAIN_CONTEXT.height);
+  glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+  if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+    ERR_WRITE("%s\n", "Framebuffer was not ready, aborting.");
+    ERR_PRINT();
+    return NULL;
+  }
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+//  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
     glfwPollEvents();
     if (!render_get(data, RENDER_DISABLE_RENDERING)) {
+
+      glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+      glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      glEnable(GL_DEPTH_TEST);
+      glUseProgram(program_shader);
       glBindVertexArray(VAO(0));
       glDrawArrays(GL_TRIANGLES, 0, 3);
+
+      glBindFramebuffer(GL_FRAMEBUFFER, 0);
+      glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+      glClear(GL_COLOR_BUFFER_BIT);
+      glUseProgram(program_screenquad);
+      GLuint location_u_texture_screen = glGetUniformLocation(
+          program_screenquad,
+          "texture_screen"
+      );
+      glUniform1i(location_u_texture_screen, 0);
+      glBindVertexArray(VAO(id_mesh_screenquad));
+      glDisable(GL_DEPTH_TEST);
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, texture_colorbuffer);
+      glDrawArrays(GL_TRIANGLES, 0, 6);
+      glBindTexture(GL_TEXTURE_2D, 0);
+
       glfwSwapBuffers(window);
     }
     num_frames++;
@@ -300,7 +421,7 @@ link_shader_program(GLuint id, GLuint sh1, GLuint sh2)
 {
   glAttachShader(id, sh1);
   glAttachShader(id, sh2);
-  glLinkProgram(program_shader);
+  glLinkProgram(id);
 
   int succ = 0;
   glGetProgramiv(id, GL_LINK_STATUS, &succ);
@@ -328,17 +449,41 @@ init_default_shaders(void)
     ERR_PRINT();
     return;
   }
-  STATUS("%s\n", "Shaders compiled successfully.");
+  STATUS("%s\n", "Default shaders compiled successfully.");
 
   program_shader = glCreateProgram();
   if (!link_shader_program(program_shader, vert, frag)) {
     ERR_PRINT();
+    return;
   }
 
-  STATUS("%s\n", "Shader program linked successfully.");
+  STATUS("%s\n", "Default shader program linked successfully.");
   glDeleteShader(vert);
   glDeleteShader(frag);
-  STATUS("%s\n", "Deleted compiled shaders.");
+  STATUS("%s\n", "Deleted compiled default shaders.");
+
+  succ = compile_shader(source_shader_screenquad_vert, &vert, GL_VERTEX_SHADER);
+  if (!succ) {
+    ERR_PRINT();
+    return;
+  }
+  succ = compile_shader(source_shader_screenquad_frag, &frag, GL_FRAGMENT_SHADER);
+  if (!succ) {
+    ERR_PRINT();
+    return;
+  }
+  STATUS("%s\n", "Screen-quad shaders compiled successfully.");
+
+  program_screenquad = glCreateProgram();
+  if (!link_shader_program(program_screenquad, vert, frag)) {
+    ERR_PRINT();
+    return;
+  }
+
+  STATUS("%s\n", "Screen-quad shader program linked successfully.");
+  glDeleteShader(vert);
+  glDeleteShader(frag);
+  STATUS("%s\n", "Deleted compiled default shaders.");
 }
 
 
@@ -400,8 +545,9 @@ feed_data(GLenum VAO, GLenum VBO, size_t id_mesh, GLenum type)
   glBindVertexArray(VAO);
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
   glBufferData(GL_ARRAY_BUFFER, mesh_size(id_mesh), mesh_data(id_mesh), type);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_TRUE, 3 * sizeof(GLfloat), (void*)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
   glEnableVertexAttribArray(0);
+  glBindVertexArray(0);
 }
 
 void
