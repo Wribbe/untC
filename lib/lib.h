@@ -52,8 +52,8 @@ extern char STRING_RING_BUFFER[SIZE_STRING_RING_BUFFER];
 #define MKDIR_DEFAULT_MODE 0755
 
 struct info_window_and_context {
-  size_t height;
   size_t width;
+  size_t height;
   const char * title;
   int GL_MINOR;
   int GL_MAJOR;
