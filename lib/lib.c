@@ -253,20 +253,20 @@ main_runner(void * data)
         M4_TRANSFORMATION[0].f[0]);
     glUseProgram(0);
 
-    mesh_data_allocate(id_mesh_screenquad, sizeof(vertices_screenquad));
-    for (size_t i=0; i<LEN(vertices_screenquad); i++) {
-      mesh_data(id_mesh_screenquad)[i] = vertices_screenquad[i];
-    }
+//    mesh_data_allocate(id_mesh_screenquad, sizeof(vertices_screenquad));
+//    for (size_t i=0; i<LEN(vertices_screenquad); i++) {
+//      mesh_data(id_mesh_screenquad)[i] = vertices_screenquad[i];
+//    }
     glBindVertexArray(VAO(id_vao_screenquad));
     glBindBuffer(GL_ARRAY_BUFFER, VBO(id_vbo_screenquad));
-    glBufferData(GL_ARRAY_BUFFER, mesh_size(id_mesh_screenquad),
-        mesh_data(id_mesh_screenquad), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, 4 * sizeof(GLfloat),
-        (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_screenquad),
+        &vertices_screenquad, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, 4 * sizeof(GLfloat),
-        (void*)(2*sizeof(GLfloat)));
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+        (void*)0);
     glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+        (void*)(2*sizeof(GLfloat)));
     glBindVertexArray(0);
 
     obj_render.id_vao = VAO(0);
