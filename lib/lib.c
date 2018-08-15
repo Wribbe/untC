@@ -247,8 +247,8 @@ main_runner(void * data)
 
     GLuint location_transform = glGetUniformLocation(program_shader,
         "transform");
-    struct v3 move_triangle = {{{0.5f, 0.5f, 0.0f}}};
-    obj_translate(0, &move_triangle);
+//    struct v3 move_triangle = {{{0.5f, 0.5f, 0.0f}}};
+//    obj_translate(0, &move_triangle);
     glUniformMatrix4fv(location_transform, 1, GL_TRUE,
         M4_TRANSFORMATION[0].f[0]);
     glUseProgram(0);
@@ -305,7 +305,7 @@ main_runner(void * data)
   }
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
