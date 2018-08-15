@@ -283,8 +283,8 @@ main_runner(void * data)
   GLuint texture_colorbuffer = 0;
   glGenTextures(1, &texture_colorbuffer);
   glBindTexture(GL_TEXTURE_2D, texture_colorbuffer);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, MAIN_CONTEXT.width,
-      MAIN_CONTEXT.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, MAIN_CONTEXT.height,
+      MAIN_CONTEXT.width, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glBindTexture(GL_TEXTURE_2D, 0);
