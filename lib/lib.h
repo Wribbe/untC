@@ -16,6 +16,8 @@
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 
+#include <setjmp.h>
+
 #include "png.h"
 
 #define SIZE_BUFF_ERROR 512
@@ -212,3 +214,6 @@ rmmkdir(const char * path_dir);
 
 char *
 path_concat(const char * root, ...);
+
+int
+file_read_png(const char * filename);

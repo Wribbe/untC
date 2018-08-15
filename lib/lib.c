@@ -944,3 +944,56 @@ path_concat(const char * root, ...)
   ret[len_current-1] = '\0';
   return ret;
 }
+
+int
+file_read_png(const char * filename)
+{
+   png_structp png_ptr;
+   png_infop info_ptr;
+   int retval = 0;
+
+   FILE * fp = NULL;
+
+   if ((fp = fopen(filename, "rb")) == NULL) {
+     ERR_WRITE("Could not open %s and read png.\n", filename);
+     ERR_PRINT();
+     goto error;
+   }
+
+   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+   if (png_ptr == NULL) {
+     ERR_WRITE("%s\n", "png_create_read_struct() returned NULL.");
+     ERR_PRINT();
+     goto error;
+   }
+
+   info_ptr = png_create_info_struct(png_ptr);
+   if (info_ptr == NULL) {
+     ERR_WRITE("%s\n", "png_create_info_struct() returned NULL.");
+     ERR_PRINT();
+     goto error;
+   }
+
+   if (setjmp(png_jmpbuf(png_ptr))) {
+     ERR_WRITE("%s\n", "Inside setjmp-error.");
+     ERR_PRINT();
+     goto error;
+   }
+
+   png_init_io(png_ptr, fp);
+
+   png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
+
+cleanup:
+   if (fp != NULL) {
+     fclose(fp);
+   }
+   if (png_ptr != NULL || info_ptr != NULL) {
+     png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+   }
+   return retval;
+
+error:
+   retval = -1;
+   goto cleanup;
+}

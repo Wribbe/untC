@@ -2,12 +2,14 @@ CFLAGS := -g -std=c11 -Wall -Wextra -pedantic -Wwrite-strings
 
 GENERAL_LIBRARIES := -lm -lpthread
 GRAPHICS_FLAGS := -lGLEW -lglfw3 -lGL -lX11 -lXrandr -lXi -lXxf86vm \
-				  -ldl -lXinerama -lXcursor -lrt -lpng -lz
+				  -ldl -lXinerama -lXcursor -lrt -lz
 
 DIR_BIN := bin
 DIR_LIB := lib
 DIR_SRC := src
 DIR_LIBPNG := libpng
+
+VER_LIBPNG := libpng16
 
 
 INCLUDES_CLONED := -Igl3w/include
@@ -18,7 +20,8 @@ CC := gcc
 EXECUTABLES = $(patsubst $(DIR_SRC)/%.c,$(DIR_BIN)/%,$(wildcard $(DIR_SRC)/*.c))
 LIBFILES := $(wildcard $(DIR_LIB)/*)
 
-SYMLINKS := lib/png.h lib/png.c lib/pngerror.c lib/pngmem.c
+SYMLINKS := $(DIR_LIB)/libpng16.a
+LIBS_STATIC := $(DIR_LIB)/libpng16.a
 
 all: dirs $(SYMLINKS) $(EXECUTABLES)
 
@@ -37,25 +40,17 @@ dirs:
 	@[ -d "./libpng" ] || { \
 		git clone git://git.code.sf.net/p/libpng/code $(DIR_LIBPNG) && \
 		cd $(DIR_LIBPNG) && \
-		./autogen.sh && \
+		git checkout $(VER_LIBPNG) && \
+		{ [ -f "configure" ] || ./autogen.sh ;} && \
 		./configure && \
 		make && \
 		make check \
 	;}
 
 $(DIR_BIN)/% : $(DIR_SRC)/%.c gl3w.c $(LIBFILES)
-	$(CC) $(filter %.c,$^) -o $@ $(CFLAGS) $(INCLUDES) $(INCLUDES_CLONED) $(GENERAL_LIBRARIES) $(GRAPHICS_FLAGS)
+	$(CC) $(filter %.c,$^) -o $@ $(CFLAGS) $(INCLUDES) $(INCLUDES_CLONED) $(LIBS_STATIC) $(GENERAL_LIBRARIES) $(GRAPHICS_FLAGS)
 
-lib/png.h:
-	@ln -rsf $(DIR_LIBPNG)/png.h $@
-
-lib/png.c:
-	@ln -rsf $(DIR_LIBPNG)/png.c $@
-
-lib/pngerror.c:
-	@ln -rsf $(DIR_LIBPNG)/pngerror.c $@
-
-lib/pngmem.c:
-	@ln -rsf $(DIR_LIBPNG)/pngmem.c $@
+$(DIR_LIB)/libpng16.a :
+	@ln -srf $(DIR_LIBPNG)/.libs/libpng16.a $@
 
 .PHONY: all

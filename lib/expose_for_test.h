@@ -46,4 +46,4 @@ const char * test_filename_png = "test.png";
 const char * test_file_write_string = "THIS IS THE TEXT THAT\nSHOULD BE IN THE FILE!";
 const char * test_file_write_filename = "test_file_write.txt";
 
-const char * test_data_png_transperancy =  "data/PNG_transparency_demonstration_1.png";
+const char * test_data_png_transparency =  "data/PNG_transparency_demonstration_1.png";

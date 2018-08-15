@@ -329,6 +329,16 @@ test_file_read_and_write()
 }
 
 bool
+test_png_read()
+{
+  const char * filename = test_data_png_transparency;
+  int error = file_read_png(filename);
+  mu_assert(error == 0, "file_read_png(%s) returned error: %d\n",
+      filename, error);
+  return true;
+}
+
+bool
 test_init() {
   mu_run_test(test_rmmkdir);
   rmmkdir(test_dir_output);
@@ -350,6 +360,7 @@ test_cases() {
   mu_run_test(test_base64_encode);
   mu_run_test(test_base64_decode);
   mu_run_test(test_file_read_and_write);
+  mu_run_test(test_png_read);
   mu_run_test(test_render_to_png);
   mu_run_test(test_data_compare);
   return true;
