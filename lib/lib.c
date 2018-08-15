@@ -270,6 +270,7 @@ main_runner(void * data)
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
         (void*)(2*sizeof(GLfloat)));
     glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     obj_render.id_vao = VAO(0);
     obj_render.id_program = program_shader;
