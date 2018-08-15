@@ -80,6 +80,7 @@ const char * source_shader_screenquad_frag = \
 "void main()\n"
 "{\n"
 "   fragment_color = texture(texture_screen, vert_texcoords);\n"
+"   //fragment_color = vec4(vert_texcoords, 0.0f, 1.0f);\n"
 "}\n";
 
 GLfloat vertices_screenquad[] = {
