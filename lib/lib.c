@@ -79,8 +79,7 @@ const char * source_shader_screenquad_frag = \
 "\n"
 "void main()\n"
 "{\n"
-"//   fragment_color = texture(texture_screen, vert_texcoords);\n"
-"   fragment_color = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"
+"   fragment_color = texture(texture_screen, vert_texcoords);\n"
 "}\n";
 
 GLfloat vertices_screenquad[] = {
@@ -311,11 +310,27 @@ main_runner(void * data)
     glClear(GL_COLOR_BUFFER_BIT);
     glfwPollEvents();
     if (!render_get(data, RENDER_DISABLE_RENDERING)) {
+
+      glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+      glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      glEnable(GL_DEPTH_TEST);
       glUseProgram(program_shader);
       glBindVertexArray(VAO(0));
       glDrawArrays(GL_TRIANGLES, 0, 3);
+
+      glBindFramebuffer(GL_FRAMEBUFFER, 0);
+      glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+      glClear(GL_COLOR_BUFFER_BIT);
       glUseProgram(program_screenquad);
+      GLuint location_u_texture_screen = glGetUniformLocation(
+          program_screenquad,
+          "texture_screen"
+      );
+      glUniform1i(location_u_texture_screen, 0);
       glBindVertexArray(VAO(id_mesh_screenquad));
+      glDisable(GL_DEPTH_TEST);
+      glBindTexture(GL_TEXTURE_2D, texture_colorbuffer);
       glDrawArrays(GL_TRIANGLES, 0, 6);
       glfwSwapBuffers(window);
     }
