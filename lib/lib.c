@@ -255,10 +255,6 @@ main_runner(void * data)
         M4_TRANSFORMATION[0].f[0]);
     glUseProgram(0);
 
-//    mesh_data_allocate(id_mesh_screenquad, sizeof(vertices_screenquad));
-//    for (size_t i=0; i<LEN(vertices_screenquad); i++) {
-//      mesh_data(id_mesh_screenquad)[i] = vertices_screenquad[i];
-//    }
     glBindVertexArray(VAO(id_vao_screenquad));
     glBindBuffer(GL_ARRAY_BUFFER, VBO(id_vbo_screenquad));
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_screenquad),
