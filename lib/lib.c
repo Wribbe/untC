@@ -305,6 +305,7 @@ main_runner(void * data)
   }
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -320,7 +321,7 @@ main_runner(void * data)
       glDrawArrays(GL_TRIANGLES, 0, 3);
 
       glBindFramebuffer(GL_FRAMEBUFFER, 0);
-      glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+      glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
       glClear(GL_COLOR_BUFFER_BIT);
       glUseProgram(program_screenquad);
       GLuint location_u_texture_screen = glGetUniformLocation(
@@ -330,8 +331,10 @@ main_runner(void * data)
       glUniform1i(location_u_texture_screen, 0);
       glBindVertexArray(VAO(id_mesh_screenquad));
       glDisable(GL_DEPTH_TEST);
+      glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, texture_colorbuffer);
       glDrawArrays(GL_TRIANGLES, 0, 6);
+      glBindTexture(GL_TEXTURE_2D, 0);
       glfwSwapBuffers(window);
     }
     num_frames++;
