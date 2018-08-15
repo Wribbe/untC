@@ -25,6 +25,7 @@ struct v3 * click_buffer_last = CLICK_BUFFER+(SIZE_CLICK_BUFFER-1);
 
 GLuint program_shader = 0;
 GLuint program_screenquad = 0;
+GLuint id_mesh_screenquad = 1;
 
 enum id_vaos {
   id_vao_default,
@@ -78,7 +79,8 @@ const char * source_shader_screenquad_frag = \
 "\n"
 "void main()\n"
 "{\n"
-"   fragment_color = texture(texture_screen, vert_texcoords);\n"
+"//   fragment_color = texture(texture_screen, vert_texcoords);\n"
+"   fragment_color = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"
 "}\n";
 
 GLfloat vertices_screenquad[] = {
@@ -250,10 +252,28 @@ main_runner(void * data)
     obj_translate(0, &move_triangle);
     glUniformMatrix4fv(location_transform, 1, GL_TRUE,
         M4_TRANSFORMATION[0].f[0]);
+    glUseProgram(0);
+
+    mesh_data_allocate(id_mesh_screenquad, sizeof(vertices_screenquad));
+    for (size_t i=0; i<LEN(vertices_screenquad); i++) {
+      mesh_data(id_mesh_screenquad)[i] = vertices_screenquad[i];
+    }
+    glBindVertexArray(VAO(id_vao_screenquad));
+    glBindBuffer(GL_ARRAY_BUFFER, VBO(id_vbo_screenquad));
+    glBufferData(GL_ARRAY_BUFFER, mesh_size(id_mesh_screenquad),
+        mesh_data(id_mesh_screenquad), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, 4 * sizeof(GLfloat),
+        (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, 4 * sizeof(GLfloat),
+        (void*)(2*sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
+    glBindVertexArray(0);
 
     obj_render.id_vao = VAO(0);
     obj_render.id_program = program_shader;
     obj_render.id_transformation = 0;
+
   }
 
   GLuint fbo = 0;
@@ -291,8 +311,12 @@ main_runner(void * data)
     glClear(GL_COLOR_BUFFER_BIT);
     glfwPollEvents();
     if (!render_get(data, RENDER_DISABLE_RENDERING)) {
+      glUseProgram(program_shader);
       glBindVertexArray(VAO(0));
       glDrawArrays(GL_TRIANGLES, 0, 3);
+      glUseProgram(program_screenquad);
+      glBindVertexArray(VAO(id_mesh_screenquad));
+      glDrawArrays(GL_TRIANGLES, 0, 6);
       glfwSwapBuffers(window);
     }
     num_frames++;
