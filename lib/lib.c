@@ -317,7 +317,7 @@ main_runner(void * data)
       glEnable(GL_DEPTH_TEST);
       glUseProgram(program_shader);
       glBindVertexArray(VAO(0));
-      glDrawArrays(GL_TRIANGLES, 0, 3);
+      glDrawArrays(GL_TRIANGLES, 0, 6);
 
       glBindFramebuffer(GL_FRAMEBUFFER, 0);
       glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -526,17 +526,21 @@ mesh_data_allocate(size_t index, size_t size)
 void
 create_triangle(void)
 {
-  GLfloat * data = mesh_data_allocate(0, sizeof(GLfloat)*9);
+  struct v3 ps[] = {
+    {{{-0.5,  0.5, 0.0}}},
+    {{{-0.5, -0.5, 0.0}}},
+    {{{ 0.5,  0.5, 0.0}}},
+
+    {{{ 0.5,  0.5, 0.0}}},
+    {{{-0.5, -0.5, 0.0}}},
+    {{{ 0.5, -0.5, 0.0}}},
+  };
+  GLfloat * data = mesh_data_allocate(0, sizeof(struct v3)*LEN(ps));
   if (data == NULL) {
     ERR_WRITE("%s\n", "Could not allocate memory for meshes");
     ERR_PRINT();
   }
-  struct v3 ps[] = {
-    {{{0.0, 0.5, 0.0}}},
-    {{{-0.5, -0.5, 0.0}}},
-    {{{0.5, -0.5, 0.0}}},
-  };
-  polygon(mesh_data(0), ps, 3);
+  polygon(mesh_data(0), ps, LEN(ps));
 }
 
 void
