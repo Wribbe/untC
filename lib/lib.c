@@ -336,6 +336,7 @@ main_runner(void * data)
       glBindTexture(GL_TEXTURE_2D, texture_colorbuffer);
       glDrawArrays(GL_TRIANGLES, 0, 6);
       glBindTexture(GL_TEXTURE_2D, 0);
+
       glfwSwapBuffers(window);
     }
     num_frames++;
