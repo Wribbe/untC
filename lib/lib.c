@@ -390,9 +390,13 @@ main_wait(struct main_run_data * data)
 void
 polygon(GLfloat * data, struct data_pos_uv * point_list, size_t num_points)
 {
+  GLfloat * datap = data;
   for (size_t i=0; i<num_points; i++) {
-    for (size_t j= 0; j<3; j++) {
-      data[i*3+j] = point_list[i].pos.f[j];
+    for (size_t j=0; j<3; j++) {
+      *datap++ = point_list[i].pos.f[j];
+    }
+    for (size_t k=0; k<2; k++) {
+      *datap++ = point_list[i].uv.f[k];
     }
   }
 }
@@ -552,7 +556,7 @@ create_triangle(void)
     { {{{-0.5, -0.5, 0.0}}}, {{{0.0f, 0.0f}}} },
     { {{{ 0.5, -0.5, 0.0}}}, {{{1.0f, 0.0f}}} },
   };
-  GLfloat * data = mesh_data_allocate(0, sizeof(struct v3)*LEN(ps));
+  GLfloat * data = mesh_data_allocate(0, sizeof(struct data_pos_uv)*LEN(ps));
   if (data == NULL) {
     ERR_WRITE("%s\n", "Could not allocate memory for meshes");
     ERR_PRINT();

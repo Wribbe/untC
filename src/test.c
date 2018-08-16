@@ -85,7 +85,7 @@ test_polygon()
    -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
     0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
   };
-  GLfloat data[LEN(correct)];
+  GLfloat data[LEN(correct)] = {0};
   struct data_pos_uv ps[] = {
     { {{{0.0, 0.5, 0.0}}},   {{{ 0.0f, 1.0f }}} },
     { {{{-0.5, -0.5, 0.0}}}, {{{ 0.0f, 0.0f }}} },
