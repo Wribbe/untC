@@ -61,8 +61,8 @@ const char * source_shader_default_frag = \
 "\n"
 "void main()\n"
 "{\n"
-" //frag_color = texture(sampler_texture, vert_texcoords);\n"
-" frag_color = vec4(vert_texcoords, 0.0f, 1.0f);\n"
+" frag_color = texture(sampler_texture, vert_texcoords);\n"
+" //frag_color = vec4(vert_texcoords, 0.0f, 1.0f);\n"
 "}\n";
 
 const char * source_shader_screenquad_vert = \
@@ -315,13 +315,13 @@ main_runner(void * data)
 
 //  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 //
-  const char * filename_dices = "data/PNG_transparency_demonstration_1.png";
+  const char * filename_dice = "data/PNG_transparency_demonstration_1.png";
   struct png_data png_data = {0};
-  file_read_png(filename_dices, &png_data);
+  file_read_png(filename_dice, &png_data);
 
-  GLuint texture_dices = 0;
-  glGenTextures(1, &texture_dices);
-  glBindTexture(GL_TEXTURE_2D, texture_dices);
+  GLuint texture_dice = 0;
+  glGenTextures(1, &texture_dice);
+  glBindTexture(GL_TEXTURE_2D, texture_dice);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16, png_data.width, png_data.height, 0,
       GL_RGBA, GL_UNSIGNED_BYTE, png_data.pixel_rows);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -337,12 +337,20 @@ main_runner(void * data)
     if (!render_get(data, RENDER_DISABLE_RENDERING)) {
 
       glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-      glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+      glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       glEnable(GL_DEPTH_TEST);
       glUseProgram(program_shader);
+      GLuint location_u_texture_quad = glGetUniformLocation(
+          program_shader,
+          "sampler_texture"
+      );
+      glUniform1i(location_u_texture_quad, 0);
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, texture_dice);
       glBindVertexArray(VAO(0));
       glDrawArrays(GL_TRIANGLES, 0, 6);
+      glBindTexture(GL_TEXTURE_2D, 0);
 
       glBindFramebuffer(GL_FRAMEBUFFER, 0);
       glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
