@@ -305,6 +305,22 @@ main_runner(void * data)
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 //  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//
+  const char * filename_dices = "data/PNG_transparency_demonstration_1.png";
+  struct png_data png_data = {0};
+  file_read_png(filename_dices, &png_data);
+
+  GLuint texture_dices = 0;
+  glGenTextures(1, &texture_dices);
+  glBindTexture(GL_TEXTURE_2D, texture_dices);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16, png_data.width, png_data.height, 0,
+      GL_RGBA, GL_UNSIGNED_BYTE, png_data.pixel_rows);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -331,7 +347,8 @@ main_runner(void * data)
       glBindVertexArray(VAO(id_mesh_screenquad));
       glDisable(GL_DEPTH_TEST);
       glActiveTexture(GL_TEXTURE0);
-      glBindTexture(GL_TEXTURE_2D, texture_colorbuffer);
+      //glBindTexture(GL_TEXTURE_2D, texture_colorbuffer);
+      glBindTexture(GL_TEXTURE_2D, texture_dices);
       glDrawArrays(GL_TRIANGLES, 0, 6);
       glBindTexture(GL_TEXTURE_2D, 0);
 
