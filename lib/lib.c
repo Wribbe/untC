@@ -946,54 +946,63 @@ path_concat(const char * root, ...)
 }
 
 int
-file_read_png(const char * filename)
+file_read_png(const char * filename, struct png_data * png_data)
 {
-   png_structp png_ptr;
-   png_infop info_ptr;
    int retval = 0;
+   png_bytep buffer = NULL;
 
-   FILE * fp = NULL;
-
-   if ((fp = fopen(filename, "rb")) == NULL) {
-     ERR_WRITE("Could not open %s and read png.\n", filename);
-     ERR_PRINT();
+   png_image image;
+   memset(&image, 0, (sizeof image));
+   image.version = PNG_IMAGE_VERSION;
+   int success = png_image_begin_read_from_file(&image, filename);
+   if (!success) {
+     ERR_WRITE("Failed to read png: %s\n", image.message);
      goto error;
    }
 
-   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-   if (png_ptr == NULL) {
-     ERR_WRITE("%s\n", "png_create_read_struct() returned NULL.");
-     ERR_PRINT();
+   image.format = PNG_FORMAT_RGBA;
+   buffer = malloc(PNG_IMAGE_SIZE(image));
+
+   if (buffer == NULL) {
+     ERR_WRITE("Could not allocate memory for png data from %s.\n", filename);
      goto error;
    }
 
-   info_ptr = png_create_info_struct(png_ptr);
-   if (info_ptr == NULL) {
-     ERR_WRITE("%s\n", "png_create_info_struct() returned NULL.");
-     ERR_PRINT();
+   success = png_image_finish_read(&image, NULL, buffer, 0, NULL);
+   if (!success) {
+     ERR_WRITE("Could not finish reading image %s: %s.\n", filename,
+         image.message);
      goto error;
    }
 
-   if (setjmp(png_jmpbuf(png_ptr))) {
-     ERR_WRITE("%s\n", "Inside setjmp-error.");
-     ERR_PRINT();
-     goto error;
-   }
-
-   png_init_io(png_ptr, fp);
-
-   png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
+   png_data->pixel_rows = buffer;
+   png_data->width = image.width;
+   png_data->height = image.height;
 
 cleanup:
-   if (fp != NULL) {
-     fclose(fp);
+   if(buffer == NULL) {
+     png_image_free(&image);
    }
-   if (png_ptr != NULL || info_ptr != NULL) {
-     png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-   }
+
    return retval;
 
 error:
+   ERR_PRINT();
+   if (buffer != NULL) {
+     free(buffer);
+   }
+   png_data->pixel_rows = NULL;
+   png_data->width = 0;
+   png_data->height= 0;
    retval = -1;
    goto cleanup;
+}
+
+void
+deallocate_struct_png_data(void * png_data_in)
+{
+  struct png_data * png_data = (struct png_data *)png_data_in;
+  if (png_data->pixel_rows != NULL) {
+    free(png_data->pixel_rows);
+  }
 }

@@ -332,9 +332,14 @@ bool
 test_png_read()
 {
   const char * filename = test_data_png_transparency;
-  int error = file_read_png(filename);
-  mu_assert(error == 0, "file_read_png(%s) returned error: %d\n",
+  struct png_data png_data = {0};
+  int error = file_read_png(filename, &png_data);
+  if (png_data.pixel_rows != NULL) {
+    free_queue_add(&png_data, deallocate_struct_png_data);
+  }
+  mu_assert(error == 0, "file_read_png(%s) returned error: %d.\n",
       filename, error);
+  free_queue_process();
   return true;
 }
 

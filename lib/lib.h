@@ -123,6 +123,15 @@ struct obj_render {
   size_t id_transformation;
 };
 
+struct png_data {
+  size_t width;
+  size_t height;
+  png_bytep pixel_rows;
+};
+
+void
+deallocate_struct_png_data(void * png_data);
+
 bool
 init_lib(GLFWwindow ** window);
 
@@ -216,4 +225,4 @@ char *
 path_concat(const char * root, ...);
 
 int
-file_read_png(const char * filename);
+file_read_png(const char * filename, struct png_data * png_data);
