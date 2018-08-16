@@ -40,20 +40,29 @@ enum id_vbos {
 const char * source_shader_default_vert = \
 "#version 330 core\n"
 "layout (location = 0) in vec3 pos;\n"
+"layout (location = 1) in vec2 in_texcoords;\n"
 "uniform mat4 transform;\n"
+"\n"
+"out vec2 vert_texcoords;\n"
 "\n"
 "void main()\n"
 "{\n"
 " gl_Position = transform * vec4(pos, 1.0);\n"
+" vert_texcoords = in_texcoords;\n"
 "}\n";
 
 const char * source_shader_default_frag = \
 "#version 330 core\n"
+"in vec2 vert_texcoords;\n"
+"\n"
+"uniform sampler2D sampler_texture;\n"
+"\n"
 "out vec4 frag_color;\n"
 "\n"
 "void main()\n"
 "{\n"
-" frag_color = vec4(1.0);\n"
+" //frag_color = texture(sampler_texture, vert_texcoords);\n"
+" frag_color = vec4(vert_texcoords, 0.0f, 1.0f);\n"
 "}\n";
 
 const char * source_shader_screenquad_vert = \
@@ -347,8 +356,7 @@ main_runner(void * data)
       glBindVertexArray(VAO(id_mesh_screenquad));
       glDisable(GL_DEPTH_TEST);
       glActiveTexture(GL_TEXTURE0);
-      //glBindTexture(GL_TEXTURE_2D, texture_colorbuffer);
-      glBindTexture(GL_TEXTURE_2D, texture_dices);
+      glBindTexture(GL_TEXTURE_2D, texture_colorbuffer);
       glDrawArrays(GL_TRIANGLES, 0, 6);
       glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -570,8 +578,12 @@ feed_data(GLenum VAO, GLenum VBO, size_t id_mesh, GLenum type)
   glBindVertexArray(VAO);
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
   glBufferData(GL_ARRAY_BUFFER, mesh_size(id_mesh), mesh_data(id_mesh), type);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat),
+      (void*)0);
   glEnableVertexAttribArray(0);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat),
+      (void*)(3*sizeof(GLfloat)));
+  glEnableVertexAttribArray(1);
   glBindVertexArray(0);
 }
 
