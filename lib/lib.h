@@ -74,6 +74,16 @@ struct main_run_data {
   size_t flags;
 };
 
+struct v2 {
+  union {
+    GLfloat f[2];
+    struct {
+      GLfloat x;
+      GLfloat y;
+    };
+  };
+};
+
 struct v3 {
   union {
     GLfloat f[3];
@@ -129,6 +139,11 @@ struct png_data {
   png_bytep pixel_rows;
 };
 
+struct data_pos_uv {
+  struct v3 pos;
+  struct v2 uv;
+};
+
 void
 deallocate_struct_png_data(void * png_data);
 
@@ -142,7 +157,7 @@ void
 main_wait(struct main_run_data * data);
 
 void
-polygon(GLfloat * data, struct v3 * point_list, size_t num_points);
+polygon(GLfloat * data, struct data_pos_uv * point_list, size_t num_points);
 
 void
 polygon_from_clicks(GLfloat * data, size_t num_points);

@@ -388,11 +388,11 @@ main_wait(struct main_run_data * data)
 }
 
 void
-polygon(GLfloat * data, struct v3 * point_list, size_t num_points)
+polygon(GLfloat * data, struct data_pos_uv * point_list, size_t num_points)
 {
   for (size_t i=0; i<num_points; i++) {
     for (size_t j= 0; j<3; j++) {
-      data[i*3+j] = point_list[i].f[j];
+      data[i*3+j] = point_list[i].pos.f[j];
     }
   }
 }
@@ -543,14 +543,14 @@ mesh_data_allocate(size_t index, size_t size)
 void
 create_triangle(void)
 {
-  struct v3 ps[] = {
-    {{{-0.5,  0.5, 0.0}}},
-    {{{-0.5, -0.5, 0.0}}},
-    {{{ 0.5,  0.5, 0.0}}},
+  struct data_pos_uv ps[] = {
+    { {{{-0.5,  0.5, 0.0}}}, {{{0.0f, 1.0f}}} },
+    { {{{-0.5, -0.5, 0.0}}}, {{{0.0f, 0.0f}}} },
+    { {{{ 0.5,  0.5, 0.0}}}, {{{1.0f, 1.0f}}} },
 
-    {{{ 0.5,  0.5, 0.0}}},
-    {{{-0.5, -0.5, 0.0}}},
-    {{{ 0.5, -0.5, 0.0}}},
+    { {{{ 0.5,  0.5, 0.0}}}, {{{1.0f, 1.0f}}} },
+    { {{{-0.5, -0.5, 0.0}}}, {{{0.0f, 0.0f}}} },
+    { {{{ 0.5, -0.5, 0.0}}}, {{{1.0f, 0.0f}}} },
   };
   GLfloat * data = mesh_data_allocate(0, sizeof(struct v3)*LEN(ps));
   if (data == NULL) {

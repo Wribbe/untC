@@ -81,18 +81,18 @@ bool
 test_polygon()
 {
   GLfloat correct[] = {
-    0.0f,  0.5f, 0.0f,
-   -0.5f, -0.5f, 0.0f,
-    0.5f, -0.5f, 0.0f,
+    0.0f,  0.5f, 0.0f, 0.0f, 1.0f,
+   -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+    0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
   };
-  GLfloat data[9];
-  struct v3 ps[] = {
-    {{{0.0, 0.5, 0.0}}},
-    {{{-0.5, -0.5, 0.0}}},
-    {{{0.5, -0.5, 0.0}}},
+  GLfloat data[LEN(correct)];
+  struct data_pos_uv ps[] = {
+    { {{{0.0, 0.5, 0.0}}},   {{{ 0.0f, 1.0f }}} },
+    { {{{-0.5, -0.5, 0.0}}}, {{{ 0.0f, 0.0f }}} },
+    { {{{0.5, -0.5, 0.0}}},  {{{ 1.0f, 0.0f }}} },
   };
-  polygon(data, ps, 3);
-  for (size_t i=0; i<9; i++) {
+  polygon(data, ps, LEN(ps));
+  for (size_t i=0; i<LEN(correct); i++) {
     mu_assert(data[i] == correct[i], "%f was not equal %f for index: %zu.\n",
         data[i], correct[i], i);
   }
